@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Assets\" />
+    <Folder Include="Source\Conveyor\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ImGui.NET">
+      <HintPath>Libraries\ImGui.NET\ImGui.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="SDL2-CS">
+      <HintPath>Libraries\SDL2-CS\SDL2-CS.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SDL2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="cimgui.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
