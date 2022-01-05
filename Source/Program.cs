@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿#define DEBUG
+
+using System.Diagnostics;
 using ImGuiNET;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
@@ -16,8 +18,12 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        using (Display display = new Display("JustConveyor", 1280, 800, false))
+        using (Display display = new("JustConveyor", 1280, 800, false))
         {
+            var componentManager = new ComponentManager();
+            componentManager.InitializeComponents(display);
+
+            OnStart?.Invoke();
             while (display.Window != 0)
             {
                 while (SDL_PollEvent(out SDL_Event e) != 0)
@@ -26,22 +32,32 @@ internal class Program
                     switch (e.type)
                     {
                         case SDL_EventType.SDL_QUIT:
+                            OnClose?.Invoke();
                             goto Exit;
                         case SDL_EventType.SDL_KEYDOWN:
+                            //TODO: Keyboard events
                             break;
                         case SDL_EventType.SDL_KEYUP:
+                            //TODO: Keyboard events
                             break;
                     }
                 }
+
+                OnUpdate?.Invoke();
 
                 display.Renderer.NewFrame();
                 ImGui.ShowDemoWindow();
                 display.Renderer.Render();
 
                 SDL_GL_SwapWindow(display.Window);
+
+                OnLateUpdate?.Invoke();
                 Time.NextFrame();
+
+#if DEBUG
                 Debug.WriteLine($@"FPS: {1 / Time.DeltaTime}
 Frametime: {Time.DeltaTime * 1000d} ms");
+#endif
             }
         }
 

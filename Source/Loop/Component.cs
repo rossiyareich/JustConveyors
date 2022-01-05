@@ -14,7 +14,6 @@ internal abstract class Component
     }
 
     protected Display Display { get; }
-
     protected abstract void Start();
     protected abstract void Update();
     protected abstract void LateUpdate();

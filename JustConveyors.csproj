@@ -12,6 +12,7 @@
   <ItemGroup>
     <Folder Include="Resources\Assets\" />
     <Folder Include="Source\Conveyor\" />
+    <Folder Include="Source\Controls\" />
   </ItemGroup>
 
   <ItemGroup>
