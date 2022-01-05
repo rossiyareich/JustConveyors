@@ -9,6 +9,11 @@ namespace JustConveyors.Source;
 // ReSharper disable ClassNeverInstantiated.Global
 internal class Program
 {
+    public static event Action OnStart;
+    public static event Action OnUpdate;
+    public static event Action OnLateUpdate;
+    public static event Action OnClose;
+
     public static void Main(string[] args)
     {
         using (Display display = new Display("JustConveyor", 1280, 800, false))
