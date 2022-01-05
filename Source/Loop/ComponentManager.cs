@@ -15,7 +15,7 @@ internal class ComponentManager
     }
 
     /// <remarks>
-    /// Put all component initializations here
+    ///     Put all component initializations here
     /// </remarks>
     public void InitializeComponents(Display display)
     {

@@ -1,6 +1,4 @@
-﻿#define DEBUG
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using ImGuiNET;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
@@ -20,7 +18,7 @@ internal class Program
     {
         using (Display display = new("JustConveyor", 1280, 800, false))
         {
-            var componentManager = new ComponentManager();
+            ComponentManager componentManager = new ComponentManager();
             componentManager.InitializeComponents(display);
 
             OnStart?.Invoke();
