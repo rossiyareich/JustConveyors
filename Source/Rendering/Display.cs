@@ -8,8 +8,12 @@ internal class Display : IDisposable
 {
     public Display(string title, int width, int height, bool vsync)
     {
+        SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+
         (Window, GlContext) = ImGuiGL.CreateWindowAndGLContext(title, width, height);
         Renderer = new ImGuiGLRenderer(Window, GlContext);
+
+        SDLRenderer = SDL_CreateRenderer(Window, -1, SDL_RendererFlags.SDL_RENDERER_SOFTWARE);
 
         WindowSize = new Vector2(width, height);
 
@@ -17,6 +21,7 @@ internal class Display : IDisposable
     }
 
     public ImGuiGLRenderer Renderer { get; }
+    public nint SDLRenderer { get; }
     public nint Window { get; }
     public nint GlContext { get; }
     public Vector2 WindowSize { get; }

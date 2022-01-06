@@ -93,12 +93,14 @@ void main()
     public void Render()
     {
         PrepareGLContext();
+
+        //glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
+        //glClear(ClearBufferMask.ColorBufferBit);
+
         ImGui.Render();
 
         ImGuiIOPtr io = ImGui.GetIO();
         glViewport(0, 0, (int)io.DisplaySize.X, (int)io.DisplaySize.Y);
-        glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-        glClear(ClearBufferMask.ColorBufferBit);
 
         RenderDrawData();
 
