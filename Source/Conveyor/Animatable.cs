@@ -7,9 +7,10 @@ namespace JustConveyors.Source.Conveyor;
 
 internal class Aninmatable : Component
 {
-    private SDL.SDL_Rect _parentTransform;
-
     private readonly List<nint> _textures;
+
+    private readonly Stopwatch _animationTimer = Stopwatch.StartNew();
+    private SDL.SDL_Rect _parentTransform;
 
     public Aninmatable(Display display, ref SDL.SDL_Rect parentTransform, long frameIntervalMilliseconds,
         params string[] imagePaths) : base(display)
@@ -26,8 +27,6 @@ internal class Aninmatable : Component
 
     public long FrameIntervalMilliseconds { get; }
     public int CurrentAnimationIndex { get; private set; }
-
-    Stopwatch _animationTimer = Stopwatch.StartNew();
 
     protected override void Start()
     {

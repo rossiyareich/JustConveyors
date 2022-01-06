@@ -21,7 +21,7 @@ internal class ComponentManager
     /// </remarks>
     public void InitializeComponents(Display display)
     {
-        var parent = new SDL.SDL_Rect() { w = 16, h = 16, x = 128, y = 128 };
-        new Aninmatable(display, ref parent, 100, @"Resources\Assets\junction\output (Junction) 0.png");
+        SDL.SDL_Rect parent = new SDL.SDL_Rect { w = 16, h = 16, x = 128, y = 128 };
+        _ = new Aninmatable(display, ref parent, 100, @"Resources\Assets\junction\output (Junction) 0.png");
     }
 }
