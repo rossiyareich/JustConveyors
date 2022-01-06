@@ -172,6 +172,9 @@ public static partial class GL
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void Viewport(int x, int y, int width, int height);
 
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    public delegate void DrawArrays(int mode, int first, int count);
+
     private static readonly GetString _GetString = _<GetString>();
     public static GenBuffers glGenBuffers = _<GenBuffers>();
     public static DeleteBuffers glDeleteBuffers = _<DeleteBuffers>();
@@ -226,6 +229,7 @@ public static partial class GL
     public static TexImage2D glTexImage2D = _<TexImage2D>();
     public static TexParameteri glTexParameteri = _<TexParameteri>();
     public static DeleteTextures glDeleteTextures = _<DeleteTextures>();
+    public static DrawArrays glDrawArrays = _<DrawArrays>();
 
     private static T _<T>() where T : class
     {
@@ -256,7 +260,6 @@ public static partial class GL
     }
 
     public static unsafe string glGetString(StringName pname) => new((sbyte*)_GetString(pname));
-
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate IntPtr GetString(StringName pname);
