@@ -23,7 +23,7 @@ internal class SDLOpenGL : IRenderComponent
 
         Texture.Load();
         Shaders.ApplyShaders();
-        Shaders.SetTexture();
+        Shaders.ResetTexture();
         GL.glEnable(GL.EnableCap.Blend);
         GL.glBlendFunc(GL.BlendingFactorSrc.SrcAlpha, GL.BlendingFactorDest.OneMinusSrcAlpha);
         GL.glBindTexture(GL.TextureTarget.Texture2D, 0);

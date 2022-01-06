@@ -66,7 +66,7 @@ internal class Shaders : IRenderComponent
 
     public void ApplyShaders() => GL.glUseProgram(_shader.ProgramID);
 
-    public void SetTexture()
+    public void ResetTexture()
     {
         int texUniformLocation = GL.glGetUniformLocation(_shader.ProgramID, "tex");
         GL.glUniform1i(texUniformLocation, 0);
