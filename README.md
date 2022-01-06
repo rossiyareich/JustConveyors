@@ -27,6 +27,7 @@ It's highly recommened to instead generate the required bindings to use imgui_im
 
 ## TODO:
 - Fix screen rendering bounds issue with SDL_Renderer->OpenGL Texture
+- Correct the scaling and coordinates for mouse-to-coordinates mapping
 - Greatly improve memory consumption and load times by loading all image textures only once and pooling them for all `Animatable`s
 - Fix out-of-place animation frames of assets
 - Add conveyors, bridge conveyors, junctions, rubies, routers
