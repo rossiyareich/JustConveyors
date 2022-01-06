@@ -70,6 +70,9 @@ public static partial class GL
     public delegate void DisableVertexAttribArray(uint index);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    public delegate void DrawArrays(int mode, int first, int count);
+
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void DrawElementsBaseVertex(BeginMode mode, int count, DrawElementsType type, IntPtr indices,
         int basevertex);
 
@@ -171,9 +174,6 @@ public static partial class GL
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void Viewport(int x, int y, int width, int height);
-
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate void DrawArrays(int mode, int first, int count);
 
     private static readonly GetString _GetString = _<GetString>();
     public static GenBuffers glGenBuffers = _<GenBuffers>();
