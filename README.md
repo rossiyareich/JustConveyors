@@ -26,10 +26,6 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Render to a texture directly with the correct SDL_Renderer flags set instead of using `SDL_RenderReadPixels` (`SDL_Texture`, similiar to `SDL_Surface`, does have a `void* pixels` to work on converting to an OpenGL Texture) for better performance, and use `SDL_UpdateTexture` to update the streamable texture for extracting the pixel data instead
-- Fix screen rendering bounds issue with SDL_Renderer->OpenGL Texture
-- Correct the scaling and coordinates for mouse-to-coordinates mapping
-- Greatly improve memory consumption and load times by loading all image textures only once and pooling them for all `Animatable`s
 - Fix out-of-place animation frames of assets
 - Add conveyors, bridge conveyors, junctions, rubies, routers
 - Add logic for all blocks
