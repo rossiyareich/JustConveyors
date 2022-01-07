@@ -6,42 +6,27 @@ namespace JustConveyors.Source.Rendering;
 
 internal class Texture : IRenderComponent
 {
-    private uint _currentTexture;
-    private SDL_Rect _displayRect;
+    private uint _currentGLTexture;
+    private IntPtr _currentSDLSurface;
 
-    public Texture(Display display)
-    {
-        _display = display;
-        _displayRect = new SDL_Rect { h = _scrX, w = _scrY, x = 0, y = 0 };
-    }
+    public Texture(Display display) => _display = display;
 
     private int _scrX => (int)_display.WindowSize.X;
     private int _scrY => (int)_display.WindowSize.Y;
     public Display _display { get; }
 
-    public void Dispose() => Cleanup();
-
-    public void Load() => RendererToTexture();
-
-    public void Cleanup()
+    public void Dispose()
     {
-        GL.glBindTexture(GL.TextureTarget.Texture2D, 0);
-        GL.DeleteTexture(_currentTexture);
+        Cleanup();
+        GL.DeleteTexture(_currentGLTexture);
     }
 
-    public uint RendererToTexture()
+    public void Load()
     {
-        IntPtr frameSurfaceHandle = SDL_CreateRGBSurface(0, _scrX, _scrY, 32, 0x00ff0000,
-            0x0000ff00,
-            0x000000ff,
-            0xff000000);
-        SDL_Surface frameSurface = Marshal.PtrToStructure<SDL_Surface>(frameSurfaceHandle);
-        SDL_RenderReadPixels(_display.SDLRenderer, ref _displayRect, SDL_PIXELFORMAT_ARGB8888,
-            frameSurface.pixels,
-            frameSurface.pitch);
+        _currentSDLSurface = SDL_CreateRGBSurface(0, _scrX, _scrY, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 
-        uint textureId = GL.GenTexture();
-        GL.glBindTexture(GL.TextureTarget.Texture2D, textureId);
+        _currentGLTexture = GL.GenTexture();
+        GL.glBindTexture(GL.TextureTarget.Texture2D, _currentGLTexture);
         GL.glTexParameteri(GL.TextureTarget.Texture2D, GL.TextureParameterName.TextureMinFilter,
             GL.TextureParameter.Nearest);
         GL.glTexParameteri(GL.TextureTarget.Texture2D, GL.TextureParameterName.TextureMagFilter,
@@ -50,12 +35,26 @@ internal class Texture : IRenderComponent
             GL.TextureParameter.Repeat);
         GL.glTexParameteri(GL.TextureTarget.Texture2D, GL.TextureParameterName.TextureWrapT,
             GL.TextureParameter.Repeat);
-        GL.glTexImage2D(GL.TextureTarget.Texture2D, 0, GL.PixelInternalFormat.Rgba8, _scrX, _scrY, 0,
-            GL.PixelFormat.Rgba, GL.PixelType.UnsignedByte, frameSurface.pixels);
 
-        SDL_FreeSurface(frameSurfaceHandle);
-
-        _currentTexture = textureId;
-        return textureId;
+        RendererToTexture();
     }
+
+    public void Cleanup()
+    {
+        GL.glBindTexture(GL.TextureTarget.Texture2D, 0);
+
+        SDL_FillRect(_currentSDLSurface, IntPtr.Zero, SDL_MapRGB(PtrToSurface(_currentSDLSurface).format, 0, 0, 0));
+    }
+
+    public void DrawSurface(IntPtr surface, ref SDL_Rect area) =>
+        SDL_BlitSurface(surface, IntPtr.Zero, _currentSDLSurface, ref area);
+
+    public void RendererToTexture()
+    {
+        GL.glBindTexture(GL.TextureTarget.Texture2D, _currentGLTexture);
+        GL.glTexImage2D(GL.TextureTarget.Texture2D, 0, GL.PixelInternalFormat.Rgba8, _scrX, _scrY, 0,
+            GL.PixelFormat.Rgba, GL.PixelType.UnsignedByte, PtrToSurface(_currentSDLSurface).pixels);
+    }
+
+    public static SDL_Surface PtrToSurface(IntPtr ptr) => Marshal.PtrToStructure<SDL_Surface>(ptr);
 }

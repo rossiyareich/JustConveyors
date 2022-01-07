@@ -5,12 +5,12 @@ namespace JustConveyors.Source.Rendering;
 internal class Vertex : IRenderComponent
 {
     //Interleaved data => X, Y, (0 => inf)TexX, TexY
-    private readonly float[] vertices =
+    private readonly float[] _vertices =
     {
-        -0.5f, 0.5f, 0f, 1f, //top left
-        0.5f, 0.5f, 1f, 1f, //top right
-        -0.5f, -0.5f, 0f, 0f, //bottom left
-        0.5f, -0.5f, 1f, 0f //bottom right
+        -1f, 1f, 0f, 1f, //top left
+        1f, 1f, 1f, 1f, //top right
+        -1f, -1f, 0f, 0f, //bottom left
+        1f, -1f, 1f, 0f //bottom right
     };
 
     private uint _VAO;
@@ -30,9 +30,9 @@ internal class Vertex : IRenderComponent
         GL.glBindVertexArray(_VAO);
         GL.glBindBuffer(GL.BufferTarget.ArrayBuffer, _VBO);
 
-        fixed (float* v = vertices)
+        fixed (float* v = _vertices)
         {
-            GL.glBufferData(GL.BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * vertices.Length), (IntPtr)v,
+            GL.glBufferData(GL.BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * _vertices.Length), (IntPtr)v,
                 GL.BufferUsageHint.StaticDraw);
         }
 
@@ -55,5 +55,5 @@ internal class Vertex : IRenderComponent
 
     public void BindVertexArray() => GL.glBindVertexArray(_VAO);
 
-    public void DrawVertexArray() => GL.glDrawArrays((int)GL.BeginMode.TriangleStrip, 0, vertices.Length / 4);
+    public void DrawVertexArray() => GL.glDrawArrays((int)GL.BeginMode.TriangleStrip, 0, _vertices.Length / 4);
 }

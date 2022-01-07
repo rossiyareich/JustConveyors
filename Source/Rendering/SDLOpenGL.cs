@@ -53,13 +53,13 @@ internal class SDLOpenGL : IRenderComponent
     public void Render()
     {
         ClearToColor(Color.Black);
-        GL.glBindTexture(GL.TextureTarget.Texture2D, Texture.RendererToTexture());
+        Texture.RendererToTexture();
         Shaders.ApplyShaders();
         Vertex.BindVertexArray();
         Vertex.DrawVertexArray();
     }
 
-    private void ClearToColor(Color color)
+    private static void ClearToColor(Color color)
     {
         GL.glClearColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
         GL.glClear(GL.ClearBufferMask.ColorBufferBit);

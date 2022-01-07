@@ -37,7 +37,7 @@ internal class Shaders : IRenderComponent
         }
         catch
         {
-            throw new Exception($"Error compiling vertex shader: {vertexShader.ShaderLog}");
+            throw new Exception($"Error compiling vertex shader: {vertexShader?.ShaderLog}");
         }
 
         try
@@ -46,7 +46,7 @@ internal class Shaders : IRenderComponent
         }
         catch
         {
-            throw new Exception($"Error compiling vertex shader: {fragmentShader.ShaderLog}");
+            throw new Exception($"Error compiling vertex shader: {fragmentShader?.ShaderLog}");
         }
 
         _shader = new GLShaderProgram(vertexShader, fragmentShader);

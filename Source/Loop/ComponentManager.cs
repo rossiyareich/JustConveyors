@@ -4,11 +4,14 @@ using SDL2;
 
 namespace JustConveyors.Source.Loop;
 
-internal class ComponentManager
+internal class ComponentManager : IDisposable
 {
     public ComponentManager() => Components = new List<Component>();
+    public PoolResources PoolResources { get; private set; }
 
     public List<Component> Components { get; }
+
+    public void Dispose() => PoolResources.Dispose();
 
     public T AddComponent<T>(T component) where T : Component
     {
@@ -19,33 +22,16 @@ internal class ComponentManager
     /// <remarks>
     ///     Put all component initializations here
     /// </remarks>
-    public void InitializeComponents(Display display)
+    public void InitializeComponents(Display display, Texture texture)
     {
-        for (int i = 0; i < 1280; i += 128)
+        PoolResources = PoolResources.GetInstance();
+
+        for (int i = 320; i < 1920; i += 16)
         {
-            for (int j = 0; j < 800; j += 128)
+            for (int j = 0; j < 896; j += 16)
             {
-                SDL.SDL_Rect parent = new() { w = 128, h = 128, x = i, y = j };
-                _ = new Aninmatable(display, ref parent, 100,
-                    @"Resources\Assets\junction\output (Junction) 0.png",
-                    @"Resources\Assets\junction\output (Junction) 1.png",
-                    @"Resources\Assets\junction\output (Junction) 2.png",
-                    @"Resources\Assets\junction\output (Junction) 3.png",
-                    @"Resources\Assets\junction\output (Junction) 4.png",
-                    @"Resources\Assets\junction\output (Junction) 5.png",
-                    @"Resources\Assets\junction\output (Junction) 6.png",
-                    @"Resources\Assets\junction\output (Junction) 7.png",
-                    @"Resources\Assets\junction\output (Junction) 8.png",
-                    @"Resources\Assets\junction\output (Junction) 9.png",
-                    @"Resources\Assets\junction\output (Junction) 10.png",
-                    @"Resources\Assets\junction\output (Junction) 11.png",
-                    @"Resources\Assets\junction\output (Junction) 12.png",
-                    @"Resources\Assets\junction\output (Junction) 13.png",
-                    @"Resources\Assets\junction\output (Junction) 14.png",
-                    @"Resources\Assets\junction\output (Junction) 15.png",
-                    @"Resources\Assets\junction\output (Junction) 16.png",
-                    @"Resources\Assets\junction\output (Junction) 17.png"
-                );
+                SDL.SDL_Rect parent = new() { w = 16, h = 16, x = i, y = j };
+                _ = new Aninmatable(display, texture, ref parent, 100, PoolResources.JunctionPool);
             }
         }
     }

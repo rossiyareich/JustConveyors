@@ -4,9 +4,10 @@ namespace JustConveyors.Source.Loop;
 
 internal abstract class Component
 {
-    public Component(Display display)
+    public Component(Display display, Texture texture)
     {
         Display = display;
+        Texture = texture;
         Program.OnStart += Start;
         Program.OnUpdate += Update;
         Program.OnLateUpdate += LateUpdate;
@@ -14,6 +15,7 @@ internal abstract class Component
     }
 
     protected Display Display { get; }
+    protected Texture Texture { get; }
     protected abstract void Start();
     protected abstract void Update();
     protected abstract void LateUpdate();

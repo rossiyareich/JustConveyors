@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Numerics;
 using ImGuiNET;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
@@ -16,13 +17,12 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        using (Display display = new("JustConveyor", 1280, 800, false))
+        using (Display display = new("JustConveyor", 1920, 896, false))
         using (SDLOpenGL glHelper = new(display))
+        using (ComponentManager componentManager = new())
         {
-            ComponentManager componentManager = new();
-            componentManager.InitializeComponents(display);
-
             glHelper.Load();
+            componentManager.InitializeComponents(display, glHelper.Texture);
 
             OnStart?.Invoke();
             while (display.Window != 0)
@@ -50,7 +50,14 @@ internal class Program
                 display.Renderer.NewFrame();
 
                 glHelper.Render();
-                ImGui.ShowDemoWindow();
+
+                ImGui.Begin("Controls", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize |
+                                        ImGuiWindowFlags.NoMove);
+                ImGui.PushStyleColor(ImGuiCol.WindowBg, new Vector4(0.8f, 0.47f, 0.55f, 0.4f));
+                ImGui.SetWindowSize(new Vector2(320, 896));
+                ImGui.SetWindowPos(new Vector2(0, 0));
+
+                ImGui.End();
 
                 display.Renderer.Render();
 
