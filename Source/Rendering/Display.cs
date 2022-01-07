@@ -13,7 +13,8 @@ internal class Display : IDisposable
         (Window, GlContext) = ImGuiGL.CreateWindowAndGLContext(title, width, height);
         Renderer = new ImGuiGLRenderer(Window, GlContext);
 
-        SDLRenderer = SDL_CreateRenderer(Window, -1, SDL_RendererFlags.SDL_RENDERER_SOFTWARE);
+        SDLRenderer = SDL_CreateRenderer(Window, -1,
+            SDL_RendererFlags.SDL_RENDERER_SOFTWARE | SDL_RendererFlags.SDL_RENDERER_TARGETTEXTURE);
 
         WindowSize = new Vector2(width, height);
 

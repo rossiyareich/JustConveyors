@@ -58,6 +58,7 @@ internal class Program
                 SDL_GL_SwapWindow(display.Window);
 
                 OnLateUpdate?.Invoke();
+
                 Time.NextFrame();
 #if DEBUG
                 Debug.WriteLine($@"FPS: {1 / Time.DeltaTime}
