@@ -1,4 +1,5 @@
-﻿using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.ConfigurationNS;
+using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -22,7 +23,7 @@ internal class ComponentManager : IDisposable
         return component;
     }
 
-    public Component InstantiateDrawable<T>(int x, int y, TexturePool pool, int startIndex) where T : Component
+    public Drawable InstantiateDrawable<T>(int x, int y, TexturePool pool, int startIndex) where T : Drawable
     {
         SDL.SDL_Rect parent = new() { w = 16, h = 16, x = x, y = y };
 
@@ -30,13 +31,12 @@ internal class ComponentManager : IDisposable
         {
             return new Animatable(_display, _texture, ref parent, pool, startIndex, 100);
         }
-
-        if (typeof(T) == typeof(Drawable))
+        else if (typeof(T) == typeof(Drawable))
         {
             return new Drawable(_display, _texture, ref parent, pool, startIndex);
         }
 
-        throw new TypeInitializationException(nameof(T), new Exception("Generic type is not a drawable"));
+        throw new TypeInitializationException(nameof(T), new Exception($"Generic type is not a {nameof(T)}"));
     }
 
     public void InitializeComponents(Display display, Texture texture)
@@ -44,5 +44,14 @@ internal class ComponentManager : IDisposable
         _display = display;
         _texture = texture;
         PoolResources = PoolResources.GetInstance();
+
+        //for (int i = Configuration.ControlsWidth; i < Configuration.WindowSizeX; i += 16)
+        //{
+        //    for (int j = 0; j < Configuration.WindowSizeY; j += 16)
+        //    {
+        //        SDL.SDL_Rect parent = new() { w = 16, h = 16, x = i, y = j };
+        //        InstantiateDrawable<Drawable>(i, j, PoolResources.JunctionPool, 0);
+        //    }
+        //}
     }
 }

@@ -29,7 +29,13 @@ internal class Drawable : Component
     {
     }
 
-    protected override void Update() => Texture.DrawSurface(_surfaces[CurrentIndex], ref Transform);
+    protected override void Update()
+    {
+        SDL.SDL_SetSurfaceBlendMode(_surfaces[CurrentIndex],
+            SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND); // Do something about this :D
+        SDL.SDL_SetSurfaceAlphaMod(_surfaces[CurrentIndex], 100); // Do something about this :D
+        Texture.DrawSurface(_surfaces[CurrentIndex], ref Transform);
+    }
 
     protected override void LateUpdate()
     {

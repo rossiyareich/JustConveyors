@@ -16,6 +16,8 @@ internal class Vertex : IRenderComponent
     private uint _vao;
     private uint _vbo;
 
+    public Vertex(Display display) => _display = display;
+
     public void Dispose()
     {
         GL.DeleteVertexArray(_vao);

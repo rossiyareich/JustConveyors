@@ -39,7 +39,11 @@ internal static class SDLEventHandler
                     {
                         SDL_GetMouseState(out int x, out int y);
                         if (x > Configuration.ControlsWidth)
-                            s_componentManager.InstantiateDrawable<Animatable>(x, y, PoolResources.JunctionPool, 0);
+                        {
+                            s_componentManager.InstantiateDrawable<Animatable>(x - 6, y - 6, PoolResources.JunctionPool,
+                                0);
+                        }
+
                         s_isWaitingMouseUp = true;
                     }
 

@@ -1,4 +1,5 @@
-﻿using SDLImGuiGL;
+﻿using System.Numerics;
+using SDLImGuiGL;
 
 namespace JustConveyors.Source.Rendering;
 
@@ -8,8 +9,9 @@ internal class Shaders : IRenderComponent
     private GLShaderProgram _shader;
     private string _vertexShaderRaw;
 
-    public Shaders(string vertexShaderPath, string fragmentShaderPath)
+    public Shaders(Display display, string vertexShaderPath, string fragmentShaderPath)
     {
+        _display = display;
         _vertexShaderPath = vertexShaderPath;
         _fragmentShaderPath = fragmentShaderPath;
     }
@@ -70,5 +72,11 @@ internal class Shaders : IRenderComponent
     {
         int texUniformLocation = GL.glGetUniformLocation(_shader.ProgramID, "tex");
         GL.glUniform1i(texUniformLocation, 0);
+    }
+
+    public void SetMatrix4x4(string uniformName, Matrix4x4 mat)
+    {
+        int uniformPtr = GL.glGetUniformLocation(_shader.ProgramID, uniformName);
+        GL.glUniformMatrix4fv(uniformPtr, 1, false, mat.ToFloatArray());
     }
 }

@@ -25,6 +25,7 @@ internal class Display : IDisposable
     public nint Window { get; }
     public nint GlContext { get; }
     public Vector2 WindowSize { get; }
+    public float Zoom { get; set; } = 0.5f;
 
     public void Dispose()
     {
