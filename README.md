@@ -24,7 +24,7 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Fix out-of-place animation frames of assets
+- Add zooming and Add grids
 - Add conveyors, bridge conveyors, junctions, rubies, routers
 - Add logic for all blocks
 - Add UI with ImGUI and handle user input with SDL
