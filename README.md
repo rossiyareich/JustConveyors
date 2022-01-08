@@ -26,4 +26,5 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ## TODO:
 - Add zooming and grids and snap-to-grid
 - Add UI with ImGUI and handle user input with SDL
+- Fix leaks
 - Add logic for all blocks
