@@ -1,4 +1,4 @@
-﻿using JustConveyors.Source.Conveyor;
+﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -6,13 +6,13 @@ namespace JustConveyors.Source.Loop;
 
 internal class ComponentManager : IDisposable
 {
+    private Display _display;
+
+    private Texture _texture;
     public ComponentManager() => Components = new List<Component>();
     public PoolResources PoolResources { get; private set; }
 
     public List<Component> Components { get; }
-
-    private Texture _texture;
-    private Display _display;
 
     public void Dispose() => PoolResources.Dispose();
 
@@ -22,29 +22,27 @@ internal class ComponentManager : IDisposable
         return component;
     }
 
-    public void InstantiateAnimatable(TexturePool obj, int ms, int x, int y)
+    public Component InstantiateDrawable<T>(int x, int y, TexturePool pool, int startIndex) where T : Component
     {
         SDL.SDL_Rect parent = new() { w = 16, h = 16, x = x, y = y };
-        _ = new Aninmatable(_display, _texture, ref parent, ms, obj);
+
+        if (typeof(T) == typeof(Animatable))
+        {
+            return new Animatable(_display, _texture, ref parent, pool, startIndex, 100);
+        }
+
+        if (typeof(T) == typeof(Drawable))
+        {
+            return new Drawable(_display, _texture, ref parent, pool, startIndex);
+        }
+
+        throw new TypeInitializationException(nameof(T), new Exception("Generic type is not a drawable"));
     }
 
-    /// <remarks>
-    ///     Put all component initializations here
-    /// </remarks>
     public void InitializeComponents(Display display, Texture texture)
     {
         _display = display;
         _texture = texture;
-
         PoolResources = PoolResources.GetInstance();
-
-        //for (int i = 320; i < 1920; i += 16)
-        //{
-        //    for (int j = 0; j < 896; j += 16)
-        //    {
-        //        SDL.SDL_Rect parent = new() { w = 16, h = 16, x = i, y = j };
-        //        _ = new Aninmatable(_display, _texture, ref parent, 100, PoolResources.JunctionPool);
-        //    }
-        //}
     }
 }

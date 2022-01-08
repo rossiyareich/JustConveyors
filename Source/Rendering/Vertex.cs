@@ -13,22 +13,22 @@ internal class Vertex : IRenderComponent
         1f, -1f, 1f, 0f //bottom right
     };
 
-    private uint _VAO;
-    private uint _VBO;
+    private uint _vao;
+    private uint _vbo;
 
     public void Dispose()
     {
-        GL.DeleteVertexArray(_VAO);
-        GL.DeleteBuffer(_VBO);
+        GL.DeleteVertexArray(_vao);
+        GL.DeleteBuffer(_vbo);
     }
 
     public unsafe void Load()
     {
-        _VAO = GL.GenVertexArray();
-        _VBO = GL.GenBuffer();
+        _vao = GL.GenVertexArray();
+        _vbo = GL.GenBuffer();
 
-        GL.glBindVertexArray(_VAO);
-        GL.glBindBuffer(GL.BufferTarget.ArrayBuffer, _VBO);
+        GL.glBindVertexArray(_vao);
+        GL.glBindBuffer(GL.BufferTarget.ArrayBuffer, _vbo);
 
         fixed (float* v = _vertices)
         {
@@ -53,7 +53,7 @@ internal class Vertex : IRenderComponent
 
     public Display _display { get; }
 
-    public void BindVertexArray() => GL.glBindVertexArray(_VAO);
+    public void BindVertexArray() => GL.glBindVertexArray(_vao);
 
     public void DrawVertexArray() => GL.glDrawArrays((int)GL.BeginMode.TriangleStrip, 0, _vertices.Length / 4);
 }

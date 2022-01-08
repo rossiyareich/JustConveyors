@@ -11,8 +11,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\Assets\" />
-    <Folder Include="Source\Controls\" />
-    <Folder Include="Source\GUI\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +24,9 @@
 
   <ItemGroup>
     <None Update="Resources\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="libpng16-16.dll">
