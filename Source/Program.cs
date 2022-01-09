@@ -19,8 +19,7 @@ internal class Program
     {
         Configuration.Load("config.json");
 
-        using (Display display = new("JustConveyor", Configuration.WindowSizeX - 3, Configuration.WindowSizeY,
-                   false)) //Added margin correction :P
+        using (Display display = new("JustConveyor", Configuration.WindowSizeX, Configuration.WindowSizeY, false))
         using (SDLOpenGL glHelper = new(display))
         using (Grid grid = new(display, glHelper.Texture))
         using (ComponentManager componentManager = new())
@@ -30,8 +29,8 @@ internal class Program
             SDLEventHandler.Load(display, componentManager);
             grid.Load();
 
-            Zoom.ChangeZoom(Zoom.M, out _);
-            Zoom.ChangeFocus(Zoom.FocusPosition, out _);
+            Zoom.ChangeZoom(Zoom.M);
+            Zoom.ChangeFocusPxs(Zoom.FocusPxs);
 
             OnStart?.Invoke();
 

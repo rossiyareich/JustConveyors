@@ -29,13 +29,23 @@ internal class Drawable : Component
     {
     }
 
-    protected override void Update()
+    /// <param name="startIndex">
+    ///     Start index is inclusive
+    /// </param>
+    /// <param name="endIndex">
+    ///     End index is exclusive
+    /// </param>
+    public virtual void SetAlpha(byte a, int startIndex, int endIndex)
     {
-        SDL.SDL_SetSurfaceBlendMode(_surfaces[CurrentIndex],
-            SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND); // Do something about this :D
-        SDL.SDL_SetSurfaceAlphaMod(_surfaces[CurrentIndex], 100); // Do something about this :D
-        Texture.DrawSurface(_surfaces[CurrentIndex], ref Transform);
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            SDL.SDL_SetSurfaceBlendMode(_surfaces[i],
+                SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND);
+            SDL.SDL_SetSurfaceAlphaMod(_surfaces[i], a);
+        }
     }
+
+    protected override void Update() => Texture.DrawSurface(_surfaces[CurrentIndex], ref Transform);
 
     protected override void LateUpdate()
     {

@@ -7,13 +7,15 @@ namespace JustConveyors.Source.Rendering;
 
 internal class SDLOpenGL : IRenderHolder
 {
+    public static Matrix4x4 TranslationMatrix { get; set; }
+
     public SDLOpenGL(Display display)
     {
         _display = display;
         Texture = new Texture(display);
         Shaders = new Shaders(display, @"Source/Rendering/SDLVertex.glsl", @"Source/Rendering/SDLFragment.glsl");
         Vertex = new Vertex(display);
-        Camera = new Camera2D(new Vector2(Configuration.WindowSizeX, Configuration.WindowSizeY) / 2f, _display.Zoom);
+        Camera = new Camera2D(Configuration.CenterScr, 1f);
     }
 
     public Texture Texture { get; }
@@ -24,6 +26,8 @@ internal class SDLOpenGL : IRenderHolder
 
     public void Load()
     {
+        TranslationMatrix = Matrix4x4.CreateTranslation(Configuration.CenterScr.X, Configuration.CenterScr.Y, 0f);
+
         Shaders.Load();
 
         Texture.Load();
@@ -58,13 +62,11 @@ internal class SDLOpenGL : IRenderHolder
     {
         Matrix4x4 scaleMatrix = Matrix4x4.CreateScale(Configuration.WindowSizeX, Configuration.WindowSizeY, 1);
         Matrix4x4 rotationMatrix = Matrix4x4.CreateRotationZ(0);
-        Matrix4x4 translationMatrix =
-            Matrix4x4.CreateTranslation(Configuration.WindowSizeX / 2f, Configuration.WindowSizeY / 2f, 0f);
 
         ClearToColor(Color.Black);
         Texture.RendererToTexture();
         Shaders.ApplyShaders();
-        Shaders.SetMatrix4x4("model", scaleMatrix * rotationMatrix * translationMatrix);
+        Shaders.SetMatrix4x4("model", scaleMatrix * rotationMatrix * TranslationMatrix);
         Shaders.SetMatrix4x4("projection", Camera.GetProjectionMatrix());
         Vertex.BindVertexArray();
         Vertex.DrawVertexArray();

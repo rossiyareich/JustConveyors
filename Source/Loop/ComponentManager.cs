@@ -1,5 +1,4 @@
-﻿using JustConveyors.Source.ConfigurationNS;
-using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -23,20 +22,25 @@ internal class ComponentManager : IDisposable
         return component;
     }
 
-    public Drawable InstantiateDrawable<T>(int x, int y, TexturePool pool, int startIndex) where T : Drawable
+    public void InstantiateDrawable<T>(TexturePool pool, int startIndex) where T : Drawable
     {
-        SDL.SDL_Rect parent = new() { w = 16, h = 16, x = x, y = y };
+        SDL.SDL_Rect parent = new()
+        {
+            w = 16, h = 16, x = Coordinates.PointingToTile.x * 16, y = Coordinates.PointingToTile.y * 16
+        };
 
         if (typeof(T) == typeof(Animatable))
         {
-            return new Animatable(_display, _texture, ref parent, pool, startIndex, 100);
+            AddComponent(new Animatable(_display, _texture, ref parent, pool, startIndex, 100));
         }
         else if (typeof(T) == typeof(Drawable))
         {
-            return new Drawable(_display, _texture, ref parent, pool, startIndex);
+            AddComponent(new Drawable(_display, _texture, ref parent, pool, startIndex));
         }
-
-        throw new TypeInitializationException(nameof(T), new Exception($"Generic type is not a {nameof(T)}"));
+        else
+        {
+            throw new TypeInitializationException(nameof(T), new Exception($"Generic type is not a {nameof(T)}"));
+        }
     }
 
     public void InitializeComponents(Display display, Texture texture)

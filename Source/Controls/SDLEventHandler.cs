@@ -24,6 +24,7 @@ internal static class SDLEventHandler
         while (SDL_PollEvent(out SDL_Event e) != 0)
         {
             s_display.Renderer.ProcessEvent(e);
+            Coordinates.UpdatePointer();
             switch (e.type)
             {
                 case SDL_EventType.SDL_QUIT:
@@ -37,11 +38,9 @@ internal static class SDLEventHandler
                 case SDL_EventType.SDL_MOUSEBUTTONDOWN:
                     if (!s_isWaitingMouseUp)
                     {
-                        SDL_GetMouseState(out int x, out int y);
-                        if (x > Configuration.ControlsWidth)
+                        if (Coordinates.PointingToScreenSpace.X > Configuration.ControlsWidth)
                         {
-                            s_componentManager.InstantiateDrawable<Animatable>(x - 6, y - 6, PoolResources.JunctionPool,
-                                0);
+                            s_componentManager.InstantiateDrawable<Animatable>(PoolResources.JunctionPool, 0);
                         }
 
                         s_isWaitingMouseUp = true;
@@ -52,6 +51,27 @@ internal static class SDLEventHandler
                     if (s_isWaitingMouseUp)
                     {
                         s_isWaitingMouseUp = false;
+                    }
+
+                    break;
+                case SDL_EventType.SDL_MOUSEWHEEL:
+                    if (Coordinates.PointingToScreenSpace.X > Configuration.ControlsWidth)
+                    {
+                        if (e.wheel.y > 0 && Zoom.M < 3f) // scroll up
+                        {
+                            Zoom.ChangeZoom(Zoom.M + 0.5f);
+                            Zoom.ChangeFocusTile();
+                        }
+                        else if (e.wheel.y < 0 && Zoom.M > 1f) // scroll down
+                        {
+                            Zoom.ChangeZoom(Zoom.M - 0.5f);
+                            Zoom.ChangeFocusTile();
+                        }
+                        else if (e.wheel.y < 0)
+                        {
+                            Zoom.ChangeZoom(1f);
+                            Zoom.ChangeFocusPxs(Configuration.CenterScr);
+                        }
                     }
 
                     break;
