@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using JustConveyors.Source.ConfigurationNS;
-using JustConveyors.Source.Controls;
 using JustConveyors.Source.Rendering;
 using static SDL2.SDL;
 
@@ -19,16 +18,16 @@ internal static class Coordinates
 
     public static (int X, int Y) GetClosestGridScaledOffset()
     {
-        int pointingX = (int)(MapHelper.Map(
+        int pointingX = (int)MapHelper.Map(
             PointingToScreenSpace.X - (Zoom.FocusPxs.X - Configuration.CenterScr.X) * 1.5f * Zoom.M,
             0f, Configuration.WindowSizeX,
-            Zoom.FocusPxs.X - (Configuration.WindowSizeX / 2f / Zoom.M),
-            Zoom.FocusPxs.X + (Configuration.WindowSizeX / 2f / Zoom.M)));
-        int pointingY = (int)(MapHelper.Map(
+            Zoom.FocusPxs.X - Configuration.WindowSizeX / 2f / Zoom.M,
+            Zoom.FocusPxs.X + Configuration.WindowSizeX / 2f / Zoom.M);
+        int pointingY = (int)MapHelper.Map(
             PointingToScreenSpace.Y - (Zoom.FocusPxs.Y - Configuration.CenterScr.Y) * 1.5f * Zoom.M,
             0f, Configuration.WindowSizeY,
-            Zoom.FocusPxs.Y - (Configuration.WindowSizeY / 2f / Zoom.M),
-            Zoom.FocusPxs.Y + (Configuration.WindowSizeY / 2f / Zoom.M)));
-        return new((pointingX / 16) * 16, (pointingY / 16) * 16);
+            Zoom.FocusPxs.Y - Configuration.WindowSizeY / 2f / Zoom.M,
+            Zoom.FocusPxs.Y + Configuration.WindowSizeY / 2f / Zoom.M);
+        return new ValueTuple<int, int>(pointingX / 16 * 16, pointingY / 16 * 16);
     }
 }

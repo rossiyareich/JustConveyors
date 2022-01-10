@@ -34,13 +34,24 @@ internal class ComponentManager : IDisposable
         };
 
         if (parent.x < Configuration.ControlsWidth)
+        {
             return;
+        }
+
         if (parent.x > Configuration.WindowSizeX)
+        {
             return;
+        }
+
         if (parent.y > Configuration.WindowSizeY)
+        {
             return;
+        }
+
         if (parent.y < 0)
+        {
             return;
+        }
 
         if (typeof(T) == typeof(Animatable))
         {
