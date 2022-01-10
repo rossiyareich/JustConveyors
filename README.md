@@ -24,6 +24,6 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Fix zooming and coordinate mapping in Zoom.cs and Coordinates.cs
 - Add UI with ImGUI and handle user input with SDL
+- Add support for moving drawables
 - Add logic for all blocks
