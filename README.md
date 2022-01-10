@@ -27,4 +27,3 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 - Fix zooming and coordinate mapping in Zoom.cs and Coordinates.cs
 - Add UI with ImGUI and handle user input with SDL
 - Add logic for all blocks
-- Fix leaks
