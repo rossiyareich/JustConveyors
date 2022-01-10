@@ -25,7 +25,7 @@ internal class ComponentManager : IDisposable
 
     public void InstantiateDrawable<T>(TexturePool pool, int startIndex) where T : Drawable
     {
-        SDL.SDL_Rect parent = new()
+        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
         {
             w = 16,
             h = 16,
