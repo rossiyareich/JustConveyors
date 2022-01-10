@@ -7,8 +7,6 @@ namespace JustConveyors.Source.Rendering;
 
 internal class SDLOpenGL : IRenderHolder
 {
-    public static Matrix4x4 TranslationMatrix { get; set; }
-
     public SDLOpenGL(Display display)
     {
         _display = display;
@@ -17,6 +15,8 @@ internal class SDLOpenGL : IRenderHolder
         Vertex = new Vertex(display);
         Camera = new Camera2D(Configuration.CenterScr, 1f);
     }
+
+    public static Matrix4x4 TranslationMatrix { get; set; }
 
     public Texture Texture { get; }
     public Shaders Shaders { get; }

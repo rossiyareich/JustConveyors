@@ -1,4 +1,5 @@
-﻿using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.ConfigurationNS;
+using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -26,8 +27,20 @@ internal class ComponentManager : IDisposable
     {
         SDL.SDL_Rect parent = new()
         {
-            w = 16, h = 16, x = Coordinates.PointingToTile.x * 16, y = Coordinates.PointingToTile.y * 16
+            w = 16,
+            h = 16,
+            x = Coordinates.GetClosestGridScaledOffset().X,
+            y = Coordinates.GetClosestGridScaledOffset().Y
         };
+
+        if (parent.x < Configuration.ControlsWidth)
+            return;
+        if (parent.x > Configuration.WindowSizeX)
+            return;
+        if (parent.y > Configuration.WindowSizeY)
+            return;
+        if (parent.y < 0)
+            return;
 
         if (typeof(T) == typeof(Animatable))
         {

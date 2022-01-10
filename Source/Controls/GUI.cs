@@ -8,6 +8,9 @@ namespace JustConveyors.Source.Controls;
 
 internal static class GUI
 {
+    public static float UserZoom = 1f;
+    public static event Action<float> OnZoomChanged;
+
     public static void Draw()
     {
         ImGui.Begin("Controls", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize |
@@ -18,8 +21,25 @@ internal static class GUI
 
         ImGui.Text($"FPS: {1d / Time.DeltaTime:0}");
         ImGui.Text($"Frametime: {Time.DeltaTime * 1000d:0} ms");
-        ImGui.Text($"Zoom Level: {Zoom.M}x");
+
+        int zoomLevel = FloatToZoomLevel(UserZoom);
+        ImGui.SliderInt("Zoom level", ref zoomLevel, 2, 10, $"{UserZoom}x");
+
+        if (ZoomLevelToFloat(zoomLevel) != UserZoom)
+        {
+            UserZoom = ZoomLevelToFloat(zoomLevel);
+            OnZoomChanged?.Invoke(UserZoom);
+        }
+
+        if (ImGui.Button("Center screen", new Vector2(Configuration.ControlsWidth - 20, 20)))
+        {
+            Zoom.ChangeFocusPxs(Configuration.CenterScr);
+        }
 
         ImGui.End();
     }
+
+    private static float ZoomLevelToFloat(int zoomLevel) => zoomLevel * 0.5f;
+
+    private static int FloatToZoomLevel(float zoomFloat) => (int)(zoomFloat * 2f);
 }

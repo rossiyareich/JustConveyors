@@ -1,4 +1,5 @@
-﻿using JustConveyors.Source.ConfigurationNS;
+﻿using System.Numerics;
+using JustConveyors.Source.ConfigurationNS;
 using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
@@ -11,7 +12,10 @@ internal static class SDLEventHandler
     private static Display s_display;
     private static ComponentManager s_componentManager;
 
-    private static bool s_isWaitingMouseUp;
+    private static bool s_isWaitingMouseLeftUp;
+    private static bool s_isWaitingMouseMiddleUp;
+    private static Vector2 s_ClickDownPos;
+    private static Vector2 s_ClickDownFocus;
 
     public static void Load(Display display, ComponentManager componentManager)
     {
@@ -25,6 +29,11 @@ internal static class SDLEventHandler
         {
             s_display.Renderer.ProcessEvent(e);
             Coordinates.UpdatePointer();
+            if (s_isWaitingMouseMiddleUp)
+            {
+                Zoom.ChangeFocusPxs(s_ClickDownFocus + (Coordinates.PointingToScreenSpace - s_ClickDownPos));
+            }
+
             switch (e.type)
             {
                 case SDL_EventType.SDL_QUIT:
@@ -36,41 +45,39 @@ internal static class SDLEventHandler
                     //TODO: Keyboard events
                     break;
                 case SDL_EventType.SDL_MOUSEBUTTONDOWN:
-                    if (!s_isWaitingMouseUp)
+                    if (Coordinates.PointingToScreenSpace.X > Configuration.ControlsWidth)
                     {
-                        if (Coordinates.PointingToScreenSpace.X > Configuration.ControlsWidth)
+                        if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            s_componentManager.InstantiateDrawable<Animatable>(PoolResources.JunctionPool, 0);
-                        }
+                            if (!s_isWaitingMouseLeftUp)
+                            {
+                                s_componentManager.InstantiateDrawable<Animatable>(PoolResources.JunctionPool, 0);
+                            }
 
-                        s_isWaitingMouseUp = true;
+                            s_isWaitingMouseLeftUp = true;
+                        }
+                        else if (e.button.button == SDL_BUTTON_MIDDLE)
+                        {
+                            s_ClickDownPos = Coordinates.PointingToScreenSpace;
+                            s_ClickDownFocus = Zoom.FocusPxs;
+                            s_isWaitingMouseMiddleUp = true;
+                        }
                     }
 
                     break;
                 case SDL_EventType.SDL_MOUSEBUTTONUP:
-                    if (s_isWaitingMouseUp)
-                    {
-                        s_isWaitingMouseUp = false;
-                    }
-
-                    break;
-                case SDL_EventType.SDL_MOUSEWHEEL:
                     if (Coordinates.PointingToScreenSpace.X > Configuration.ControlsWidth)
                     {
-                        if (e.wheel.y > 0 && Zoom.M < 3f) // scroll up
+                        if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            Zoom.ChangeZoom(Zoom.M + 0.5f);
-                            Zoom.ChangeFocusTile();
+                            if (s_isWaitingMouseLeftUp)
+                            {
+                                s_isWaitingMouseLeftUp = false;
+                            }
                         }
-                        else if (e.wheel.y < 0 && Zoom.M > 1f) // scroll down
+                        else if (e.button.button == SDL_BUTTON_MIDDLE)
                         {
-                            Zoom.ChangeZoom(Zoom.M - 0.5f);
-                            Zoom.ChangeFocusTile();
-                        }
-                        else if (e.wheel.y < 0)
-                        {
-                            Zoom.ChangeZoom(1f);
-                            Zoom.ChangeFocusPxs(Configuration.CenterScr);
+                            s_isWaitingMouseMiddleUp = false;
                         }
                     }
 
