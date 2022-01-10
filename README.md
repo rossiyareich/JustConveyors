@@ -24,6 +24,7 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Add UI with ImGUI and handle user input with SDL
+- Refactor
+- Properly handle user input and do good UI
 - Add support for moving drawables
 - Add logic for all blocks
