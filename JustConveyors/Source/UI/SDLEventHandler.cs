@@ -8,13 +8,14 @@ namespace JustConveyors.Source.UI;
 
 internal class SDLEventHandler
 {
+    public static Drawable ActiveBlock { get; set; }
+
     private readonly Display _display;
     private readonly DrawableManager _drawableManager;
     private Vector2 _clickDownFocus;
     private Vector2 _clickDownInitFocus;
     private bool _isWaitingMouseLeftUp;
     private bool _isWaitingMouseMiddleUp;
-    private Drawable _cursorPreviewDrawable;
 
     public SDLEventHandler(Display display, DrawableManager drawableManager)
     {
@@ -22,11 +23,11 @@ internal class SDLEventHandler
         _drawableManager = drawableManager;
 
         //Temp: move this later
-        var cursorSurface = SDL_CreateRGBSurface(0, 16, 16, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+        IntPtr cursorSurface = SDL_CreateRGBSurface(0, 16, 16, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
         SDL_BlitSurface(PoolResources.JunctionPool.Surfaces[0], IntPtr.Zero, cursorSurface, IntPtr.Zero);
-        _cursorPreviewDrawable = Drawable.Instantiate(_drawableManager, (int)Coordinates.CenterScr.X,
+        ActiveBlock = Drawable.Instantiate(_drawableManager, (int)Coordinates.CenterScr.X,
             (int)Coordinates.CenterScr.Y, cursorSurface, 0, 5);
-        _cursorPreviewDrawable.SetAlpha(100, 0, 1);
+        ActiveBlock.SetAlpha(100, 0, 1);
     }
 
     public bool PollEvents()
@@ -35,7 +36,7 @@ internal class SDLEventHandler
         {
             _display.Renderer.ProcessEvent(e);
             Coordinates.UpdatePointer();
-            _cursorPreviewDrawable.Transform = _cursorPreviewDrawable.Transform with
+            ActiveBlock.Transform = ActiveBlock.Transform with
             {
                 x = Coordinates.PointingToTileScreenSpace.X, y = Coordinates.PointingToTileScreenSpace.Y
             };

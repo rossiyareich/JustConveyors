@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\Assets\" />
+    <Folder Include="Source\Tiles\" />
   </ItemGroup>
 
   <ItemGroup>

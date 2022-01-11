@@ -88,7 +88,7 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new Drawable(manager.Display, manager.Texture, ref parent, pool, startIndex, layer);
+        Drawable drawable = new(manager.Display, manager.Texture, ref parent, pool, startIndex, layer);
         manager.Drawables.Add(drawable);
         return drawable;
     }
@@ -122,7 +122,7 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new Drawable(manager.Display, manager.Texture, ref parent, surface, startIndex, layer);
+        Drawable drawable = new(manager.Display, manager.Texture, ref parent, surface, startIndex, layer);
         manager.Drawables.Add(drawable);
         return drawable;
     }

@@ -8,6 +8,7 @@ internal class Texture : IRenderComponent
 {
     private uint _currentGLTexture;
     private IntPtr _currentSDLSurface;
+    private readonly List<(uint layer, IntPtr surface, SDL_Rect area)> _surfaces;
 
     public Texture(Display display)
     {
@@ -17,7 +18,6 @@ internal class Texture : IRenderComponent
 
     private int _scrX => (int)_display.WindowSize.X;
     private int _scrY => (int)_display.WindowSize.Y;
-    private List<(uint layer, IntPtr surface, SDL_Rect area)> _surfaces;
     public Display _display { get; }
 
     public void Dispose()
@@ -52,29 +52,27 @@ internal class Texture : IRenderComponent
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="surface"></param>
     /// <param name="area"></param>
     /// <param name="layer">
-    /// Layer must be greater than 1
+    ///     Layer must be greater than 1
     /// </param>
-    public void DrawSurface(IntPtr surface, ref SDL_Rect area, uint layer)
-    {
-        _surfaces.Add((layer, surface, area));
-    }
+    public void DrawSurface(IntPtr surface, ref SDL_Rect area, uint layer) => _surfaces.Add((layer, surface, area));
 
     public void RendererToTexture()
     {
         if (_surfaces.Any())
+        {
             for (int i = 0; i <= _surfaces.Max(x => x.layer); i++)
             {
-                foreach (var surface in _surfaces.Where(x => x.layer == i))
+                foreach ((uint layer, IntPtr surface, SDL_Rect area) surface in _surfaces.Where(x => x.layer == i))
                 {
-                    var area = surface.area;
+                    SDL_Rect area = surface.area;
                     SDL_BlitSurface(surface.surface, IntPtr.Zero, _currentSDLSurface, ref area);
                 }
             }
+        }
 
         GL.glBindTexture(GL.TextureTarget.Texture2D, _currentGLTexture);
         GL.glTexImage2D(GL.TextureTarget.Texture2D, 0, GL.PixelInternalFormat.Rgba8, _scrX, _scrY, 0,
