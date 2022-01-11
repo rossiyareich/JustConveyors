@@ -8,7 +8,7 @@ using static SDL2.SDL;
 namespace JustConveyors.Renderer.Source;
 
 // ReSharper disable ClassNeverInstantiated.Global
-internal class Program
+public class Program
 {
     public static event Action OnStart;
     public static event Action OnUpdate;
