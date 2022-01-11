@@ -25,4 +25,6 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 
 ## TODO:
 - Add the UI to support all blocks
+- Make rotated assets and make an enum for all assets + tag each surface in the TexturePool by index with the enum
+- Add support for deletion of drawables/animatables
 - Add logic for all blocks
