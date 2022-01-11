@@ -1,5 +1,4 @@
-﻿using JustConveyors.Source.ConfigurationNS;
-using JustConveyors.Source.Rendering;
+﻿using JustConveyors.Source.Rendering;
 using static SDL2.SDL;
 
 namespace JustConveyors.Source.Drawing;
@@ -14,7 +13,11 @@ internal class Grid : IRenderHolder
     {
         _display = display;
         _texture = texture;
-        Zoom.OnZoomChanged += OnZoomChanged;
+        ScreenRect = new SDL_Rect
+        {
+            w = Configuration.WindowSizeX, h = Configuration.WindowSizeY, x = Configuration.ControlsWidth
+        };
+        Camera2D.OnZoomChanged += OnZoomChanged;
     }
 
     public void Dispose()
@@ -27,20 +30,18 @@ internal class Grid : IRenderHolder
 
     public Display _display { get; }
 
-    public void Load() =>
-        ScreenRect = new SDL_Rect
-        {
-            w = Configuration.WindowSizeX, h = Configuration.WindowSizeY, x = Configuration.ControlsWidth
-        };
+    public void Load()
+    {
+    }
+
 
     public void Cleanup()
     {
     }
 
-    public void Render() => _texture.DrawSurface(_currentSurface, ref ScreenRect);
+    public void Render() => _texture.DrawSurface(_currentSurface, ref ScreenRect, 1);
 
     private void OnZoomChanged(float newZoom) => RedrawGrid(newZoom);
-
 
     private void RedrawGrid(float zoom)
     {

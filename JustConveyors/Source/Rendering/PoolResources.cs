@@ -106,7 +106,7 @@ internal class PoolResources : IDisposable
 
     public static PoolResources GetInstance()
     {
-        if (s_instance == null)
+        if (s_instance is null)
         {
             s_instance = new PoolResources();
         }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -7,19 +8,19 @@ namespace JustConveyors.Source.Drawing;
 internal class Animatable : Drawable
 {
     private readonly Stopwatch _animationTimer = Stopwatch.StartNew();
+    public bool IsAnimating;
 
-    public Animatable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool, int startIndex,
-        long frameIntervalMilliseconds) : base(display, texture, ref transform, pool, startIndex) =>
-        FrameIntervalMilliseconds = frameIntervalMilliseconds;
-
-    public bool IsAnimating { get; private set; } = true;
-    public long FrameIntervalMilliseconds { get; private set; }
-
-    protected override void Start()
+    public Animatable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+        int startSurfaceIndex, uint layer, long frameIntervalMilliseconds, bool startState)
+        : base(display, texture, ref transform, pool, startSurfaceIndex, layer)
     {
+        FrameIntervalMilliseconds = frameIntervalMilliseconds;
+        IsAnimating = startState;
     }
 
-    public void ChangeAnimation(bool state, long intervalSeconds, bool restart)
+    public long FrameIntervalMilliseconds { get; private set; }
+
+    public void Change(bool state, long intervalSeconds, bool restart)
     {
         IsAnimating = state;
         FrameIntervalMilliseconds = intervalSeconds;
@@ -33,19 +34,49 @@ internal class Animatable : Drawable
     {
         if (IsAnimating && _animationTimer.ElapsedMilliseconds >= FrameIntervalMilliseconds)
         {
-            CurrentIndex++;
+            CurrentSurfaceIndex++;
             _animationTimer.Restart();
         }
 
-        if (CurrentIndex >= _surfaces.Count)
+        if (CurrentSurfaceIndex >= Surfaces.Count)
         {
-            CurrentIndex = 0;
+            CurrentSurfaceIndex = 0;
         }
 
         base.Update();
     }
 
-    protected override void LateUpdate()
+    public static Animatable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
+        TexturePool pool, int startIndex, long frameIntervalMilliseconds, bool startState, uint layer)
     {
+        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
+        {
+            w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY
+        };
+
+        if (parent.x < Configuration.ControlsWidth)
+        {
+            return null;
+        }
+
+        if (parent.x > Configuration.WindowSizeX)
+        {
+            return null;
+        }
+
+        if (parent.y > Configuration.WindowSizeY)
+        {
+            return null;
+        }
+
+        if (parent.y < 0)
+        {
+            return null;
+        }
+
+        Animatable animatable = new Animatable(manager.Display, manager.Texture, ref parent, pool, startIndex, layer,
+            frameIntervalMilliseconds, startState);
+        manager.Drawables.Add(animatable);
+        return animatable;
     }
 }

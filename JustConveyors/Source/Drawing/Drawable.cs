@@ -6,24 +6,31 @@ namespace JustConveyors.Source.Drawing;
 
 internal class Drawable : Component
 {
-    protected readonly List<nint> _surfaces;
     public SDL.SDL_Rect Transform;
 
-    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool, int startIndex)
+    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+        int startSurfaceIndex, uint layer)
         : base(display, texture)
     {
-        _surfaces = pool.Surfaces;
+        Surfaces = pool.Surfaces;
         Transform = transform;
-        CurrentIndex = startIndex;
+        CurrentSurfaceIndex = startSurfaceIndex;
+        Layer = layer;
     }
 
-    public int CurrentIndex { get; protected set; }
-
-    public void ChangeProp(int index, SDL.SDL_Rect rect)
+    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, IntPtr surface,
+        int startSurfaceIndex, uint layer)
+        : base(display, texture)
     {
-        CurrentIndex = index;
-        Transform = rect;
+        Surfaces = new List<nint>(1) { surface };
+        Transform = transform;
+        CurrentSurfaceIndex = startSurfaceIndex;
+        Layer = layer;
     }
+
+    public List<nint> Surfaces { get; }
+    public int CurrentSurfaceIndex { get; set; }
+    public uint Layer { get; set; }
 
     protected override void Start()
     {
@@ -40,15 +47,83 @@ internal class Drawable : Component
     {
         for (int i = startIndex; i < endIndex; i++)
         {
-            SDL.SDL_SetSurfaceBlendMode(_surfaces[i],
+            SDL.SDL_SetSurfaceBlendMode(Surfaces[i],
                 SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND);
-            SDL.SDL_SetSurfaceAlphaMod(_surfaces[i], alpha);
+            SDL.SDL_SetSurfaceAlphaMod(Surfaces[i], alpha);
         }
     }
 
-    protected override void Update() => Texture.DrawSurface(_surfaces[CurrentIndex], ref Transform);
+    protected override void Update() => Texture.DrawSurface(Surfaces[CurrentSurfaceIndex], ref Transform, Layer);
 
     protected override void LateUpdate()
     {
+    }
+
+    public static Drawable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
+        TexturePool pool,
+        int startIndex, uint layer)
+    {
+        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
+        {
+            w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY
+        };
+
+        if (parent.x < Configuration.ControlsWidth)
+        {
+            return null;
+        }
+
+        if (parent.x > Configuration.WindowSizeX)
+        {
+            return null;
+        }
+
+        if (parent.y > Configuration.WindowSizeY)
+        {
+            return null;
+        }
+
+        if (parent.y < 0)
+        {
+            return null;
+        }
+
+        Drawable drawable = new Drawable(manager.Display, manager.Texture, ref parent, pool, startIndex, layer);
+        manager.Drawables.Add(drawable);
+        return drawable;
+    }
+
+    public static Drawable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
+        IntPtr surface,
+        int startIndex, uint layer)
+    {
+        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
+        {
+            w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY
+        };
+
+        if (parent.x < Configuration.ControlsWidth)
+        {
+            return null;
+        }
+
+        if (parent.x > Configuration.WindowSizeX)
+        {
+            return null;
+        }
+
+        if (parent.y > Configuration.WindowSizeY)
+        {
+            return null;
+        }
+
+        if (parent.y < 0)
+        {
+            return null;
+        }
+
+        Drawable drawable = new Drawable(manager.Display, manager.Texture, ref parent, surface, startIndex, layer);
+        manager.Drawables.Add(drawable);
+        return drawable;
     }
 }

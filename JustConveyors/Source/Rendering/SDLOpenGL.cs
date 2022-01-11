@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using JustConveyors.Libraries.ImGuiGL.OpenGL;
-using JustConveyors.Source.ConfigurationNS;
+using JustConveyors.Source.Drawing;
 
 namespace JustConveyors.Source.Rendering;
 
@@ -13,10 +13,16 @@ internal class SDLOpenGL : IRenderHolder
         Texture = new Texture(display);
         Shaders = new Shaders(display, @"Source/Rendering/SDLVertex.glsl", @"Source/Rendering/SDLFragment.glsl");
         Vertex = new Vertex(display);
-        Camera = new Camera2D(Configuration.CenterScr, 1f);
+        Camera = new Camera2D(Coordinates.CenterScr, 1f);
     }
 
-    public static Matrix4x4 TranslationMatrix { get; set; }
+    public static Matrix4x4 TranslationMatrix { get; set; } =
+        Matrix4x4.CreateTranslation(Coordinates.CenterScr.X, Coordinates.CenterScr.Y, 0f);
+
+    public static Matrix4x4 scaleMatrix { get; set; } =
+        Matrix4x4.CreateScale(Configuration.WindowSizeX, Configuration.WindowSizeY, 1);
+
+    public static Matrix4x4 rotationMatrix { get; set; } = Matrix4x4.CreateRotationZ(0);
 
     public Texture Texture { get; }
     public Shaders Shaders { get; }
@@ -26,10 +32,7 @@ internal class SDLOpenGL : IRenderHolder
 
     public void Load()
     {
-        TranslationMatrix = Matrix4x4.CreateTranslation(Configuration.CenterScr.X, Configuration.CenterScr.Y, 0f);
-
         Shaders.Load();
-
         Texture.Load();
         Shaders.ApplyShaders();
         Shaders.ResetTexture();
@@ -60,9 +63,6 @@ internal class SDLOpenGL : IRenderHolder
     /// >
     public void Render()
     {
-        Matrix4x4 scaleMatrix = Matrix4x4.CreateScale(Configuration.WindowSizeX, Configuration.WindowSizeY, 1);
-        Matrix4x4 rotationMatrix = Matrix4x4.CreateRotationZ(0);
-
         ClearToColor(Color.Black);
         Texture.RendererToTexture();
         Shaders.ApplyShaders();

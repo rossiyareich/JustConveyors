@@ -1,8 +1,7 @@
-﻿using JustConveyors.Source.ConfigurationNS;
-using JustConveyors.Source.Controls;
-using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
+using JustConveyors.Source.UI;
 using static SDL2.SDL;
 
 namespace JustConveyors.Source;
@@ -20,23 +19,21 @@ internal class Program
         Configuration.Load("config.json");
 
         using (Display display = new("JustConveyor", Configuration.WindowSizeX, Configuration.WindowSizeY, false))
-        using (SDLOpenGL glHelper = new(display))
-        using (Grid grid = new(display, glHelper.Texture))
-        using (ComponentManager componentManager = new())
+        using (SDLOpenGL glManager = new(display))
+        using (Grid grid = new(display, glManager.Texture))
+        using (DrawableManager drawableManager = new(display, glManager.Texture))
         {
-            glHelper.Load();
-            componentManager.InitializeComponents(display, glHelper.Texture);
-            SDLEventHandler.Load(display, componentManager);
+            glManager.Load();
             grid.Load();
 
-            Zoom.ChangeZoom(Zoom.M);
-            Zoom.ChangeFocusPxs(Zoom.FocusPxs);
+            SDLEventHandler uiHandler = new(display, drawableManager);
+            Camera2D.ChangeZoom(Camera2D.M);
+            Camera2D.ChangeFocusScrRaw(Camera2D.FocusPxs);
 
             OnStart?.Invoke();
-
             while (display.Window != 0)
             {
-                if (!SDLEventHandler.PollEvents())
+                if (!uiHandler.PollEvents())
                 {
                     OnClose?.Invoke();
                     break;
@@ -45,10 +42,10 @@ internal class Program
                 grid.Render();
                 OnUpdate?.Invoke();
                 display.Renderer.NewFrame();
-                glHelper.Render();
+                glManager.Render();
                 GUI.Draw();
                 display.Renderer.Render();
-                glHelper.Cleanup();
+                glManager.Cleanup();
                 grid.Cleanup();
                 SDL_GL_SwapWindow(display.Window);
                 OnLateUpdate?.Invoke();
