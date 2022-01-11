@@ -25,6 +25,7 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 
 ## TODO:
 - Refactor & Seperate conveyor logic from rendering + Add world space (screen space but without the UI Panel offset)
+- Add support for multi-layer drawing
 - Properly handle user input and do good UI
 - Add support for moving drawables
 - Add logic for all blocks
