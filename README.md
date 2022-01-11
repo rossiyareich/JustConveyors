@@ -24,7 +24,6 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Add the UI to support all blocks
-- Make rotated assets and make an enum for all assets + tag each surface in the TexturePool by index with the enum
+- Add the UI to support all blocks & support different rotations
 - Add support for deletion of drawables/animatables
 - Add logic for all blocks
