@@ -24,8 +24,5 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Refactor & Seperate conveyor logic from rendering + Add world space (screen space but without the UI Panel offset)
-- Add support for multi-layer drawing
-- Properly handle user input and do good UI
-- Add support for moving drawables
+- Add the UI to support all blocks
 - Add logic for all blocks
