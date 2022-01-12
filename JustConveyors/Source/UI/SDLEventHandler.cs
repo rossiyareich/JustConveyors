@@ -2,6 +2,7 @@
 using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
+using JustConveyors.Source.Scripting;
 using static SDL2.SDL;
 
 namespace JustConveyors.Source.UI;
@@ -74,10 +75,12 @@ internal class SDLEventHandler
                             {
                                 if (ActiveBlock.ParentPool.IsAninmatable)
                                 {
-                                    Animatable.Instantiate(_drawableManager, Coordinates.PointingToTileScreenSpace.X,
+                                    Animatable animatable = Animatable.Instantiate(_drawableManager,
+                                        Coordinates.PointingToTileScreenSpace.X,
                                         Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
                                         100, true,
                                         2);
+                                    animatable.Script = new testConveyorScript(animatable);
                                 }
                                 else
                                 {

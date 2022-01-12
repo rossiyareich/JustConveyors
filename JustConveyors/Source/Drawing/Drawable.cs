@@ -5,9 +5,9 @@ using SDL2;
 
 namespace JustConveyors.Source.Drawing;
 
-internal class Drawable : Component, IScriptHolder<IScript>
+internal class Drawable : Component
 {
-    private IScript _script;
+    protected IScript _script;
     public SDL.SDL_Rect Transform;
 
     protected Drawable(Display display, Texture texture, IEventHolder eventHolder, ref SDL.SDL_Rect transform,
@@ -61,21 +61,16 @@ internal class Drawable : Component, IScriptHolder<IScript>
     public int CurrentSurfaceIndex { get; protected set; }
     public uint Layer { get; set; }
 
-    public virtual IScript Script
+    public IScript Script
     {
         get => _script;
         set
         {
-            InvokeOnClose();
+            _script?.Close();
             _script = value;
-            InvokeOnStart();
+            _script?.Start();
         }
     }
-
-    public event Action OnStart;
-    public event Action OnUpdate;
-    public event Action OnLateUpdate;
-    public event Action OnClose;
 
     protected override void Start()
     {
@@ -120,11 +115,11 @@ internal class Drawable : Component, IScriptHolder<IScript>
 
     protected override void Update()
     {
-        InvokeOnUpdate();
+        _script?.Update();
         Texture.DrawSurface(Surfaces[CurrentSurfaceIndex].surface, ref Transform, Layer);
     }
 
-    protected override void LateUpdate() => InvokeOnLateUpdate();
+    protected override void LateUpdate() => _script?.LateUpdate();
 
     public static Drawable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
         TexturePool pool,
@@ -195,9 +190,4 @@ internal class Drawable : Component, IScriptHolder<IScript>
         manager.Drawables.Add(drawable);
         return drawable;
     }
-
-    protected virtual void InvokeOnStart() => OnStart?.Invoke();
-    protected virtual void InvokeOnUpdate() => OnUpdate?.Invoke();
-    protected virtual void InvokeOnLateUpdate() => OnLateUpdate?.Invoke();
-    protected virtual void InvokeOnClose() => OnClose?.Invoke();
 }

@@ -18,7 +18,7 @@ internal class Program : IEventHolder
     {
         Configuration.Load("config.json");
 
-        Program @this = new Program();
+        Program @this = new();
 
         using (Display display = new("JustConveyor", Configuration.WindowSizeX, Configuration.WindowSizeY, false))
         using (SDLOpenGL glManager = new(display))
