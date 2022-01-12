@@ -4,14 +4,17 @@ namespace JustConveyors.Source.Loop;
 
 internal abstract class Component
 {
-    public Component(Display display, Texture texture)
+    private readonly IEventHolder _eventHolder;
+
+    public Component(Display display, Texture texture, IEventHolder eventHolder)
     {
         Display = display;
         Texture = texture;
-        Program.OnStart += Start;
-        Program.OnUpdate += Update;
-        Program.OnLateUpdate += LateUpdate;
-        Program.OnClose += Close;
+        _eventHolder = eventHolder;
+        _eventHolder.OnStart += Start;
+        _eventHolder.OnUpdate += Update;
+        _eventHolder.OnLateUpdate += LateUpdate;
+        _eventHolder.OnClose += Close;
     }
 
     protected Display Display { get; }
@@ -22,9 +25,9 @@ internal abstract class Component
 
     public virtual void Close()
     {
-        Program.OnStart -= Start;
-        Program.OnUpdate -= Update;
-        Program.OnLateUpdate -= LateUpdate;
-        Program.OnClose -= Close;
+        _eventHolder.OnStart -= Start;
+        _eventHolder.OnUpdate -= Update;
+        _eventHolder.OnLateUpdate -= LateUpdate;
+        _eventHolder.OnClose -= Close;
     }
 }

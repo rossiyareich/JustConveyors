@@ -10,9 +10,10 @@ internal class Animatable : Drawable
     private readonly Stopwatch _animationTimer = Stopwatch.StartNew();
     public bool IsAnimating;
 
-    public Animatable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+    public Animatable(Display display, Texture texture, IEventHolder eventHolder, ref SDL.SDL_Rect transform,
+        TexturePool pool,
         int startSurfaceIndex, uint layer, long frameIntervalMilliseconds, bool startState)
-        : base(display, texture, ref transform, pool, startSurfaceIndex, layer)
+        : base(display, texture, eventHolder, ref transform, pool, startSurfaceIndex, layer)
     {
         FrameIntervalMilliseconds = frameIntervalMilliseconds;
         IsAnimating = startState;
@@ -74,7 +75,8 @@ internal class Animatable : Drawable
             return null;
         }
 
-        Animatable animatable = new(manager.Display, manager.Texture, ref parent, pool, startIndex, layer,
+        Animatable animatable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, pool, startIndex,
+            layer,
             frameIntervalMilliseconds, startState);
         manager.Drawables.Add(animatable);
         return animatable;

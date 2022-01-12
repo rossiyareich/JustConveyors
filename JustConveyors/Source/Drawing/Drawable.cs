@@ -1,16 +1,19 @@
 ﻿using JustConveyors.Source.Loop;
 using JustConveyors.Source.Rendering;
+using JustConveyors.Source.Scripting;
 using SDL2;
 
 namespace JustConveyors.Source.Drawing;
 
-internal class Drawable : Component
+internal class Drawable : Component, IScriptHolder<IScript>
 {
+    private IScript _script;
     public SDL.SDL_Rect Transform;
 
-    protected Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+    protected Drawable(Display display, Texture texture, IEventHolder eventHolder, ref SDL.SDL_Rect transform,
+        TexturePool pool,
         int startSurfaceIndex, uint layer)
-        : base(display, texture)
+        : base(display, texture, eventHolder)
     {
         Surfaces = pool.Surfaces;
         Transform = transform;
@@ -24,19 +27,22 @@ internal class Drawable : Component
     /// </summary>
     /// <param name="display"></param>
     /// <param name="texture"></param>
+    /// <param name="eventHolder"></param>
     /// <param name="transform"></param>
     /// <param name="pool"></param>
     /// <param name="startSurfaceIndex">startSurfaceIndex is ignored.</param>
     /// <param name="layer"></param>
     /// <param name="startRotation"></param>
-    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+    public Drawable(Display display, Texture texture, IEventHolder eventHolder, ref SDL.SDL_Rect transform,
+        TexturePool pool,
         int startSurfaceIndex, uint layer, TransformFlags startRotation)
-        : this(display, texture, ref transform, pool, startSurfaceIndex, layer) =>
+        : this(display, texture, eventHolder, ref transform, pool, startSurfaceIndex, layer) =>
         SetSurface(startRotation);
 
-    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, IntPtr surface,
+    public Drawable(Display display, Texture texture, IEventHolder eventHolder, ref SDL.SDL_Rect transform,
+        IntPtr surface,
         int startSurfaceIndex, uint layer)
-        : base(display, texture)
+        : base(display, texture, eventHolder)
     {
         Surfaces = new List<(IntPtr, TransformFlags)>(1) { (surface, TransformFlags.None) };
         Transform = transform;
@@ -54,6 +60,22 @@ internal class Drawable : Component
     public List<(IntPtr surface, TransformFlags flag)> Surfaces { get; }
     public int CurrentSurfaceIndex { get; protected set; }
     public uint Layer { get; set; }
+
+    public virtual IScript Script
+    {
+        get => _script;
+        set
+        {
+            InvokeOnClose();
+            _script = value;
+            InvokeOnStart();
+        }
+    }
+
+    public event Action OnStart;
+    public event Action OnUpdate;
+    public event Action OnLateUpdate;
+    public event Action OnClose;
 
     protected override void Start()
     {
@@ -96,12 +118,13 @@ internal class Drawable : Component
         Rotation = Surfaces[index].flag;
     }
 
-    protected override void Update() =>
-        Texture.DrawSurface(Surfaces[CurrentSurfaceIndex].surface, ref Transform, Layer);
-
-    protected override void LateUpdate()
+    protected override void Update()
     {
+        InvokeOnUpdate();
+        Texture.DrawSurface(Surfaces[CurrentSurfaceIndex].surface, ref Transform, Layer);
     }
+
+    protected override void LateUpdate() => InvokeOnLateUpdate();
 
     public static Drawable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
         TexturePool pool,
@@ -132,7 +155,8 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new(manager.Display, manager.Texture, ref parent, pool, startIndex, layer, startRotation);
+        Drawable drawable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, pool, startIndex,
+            layer, startRotation);
         manager.Drawables.Add(drawable);
         return drawable;
     }
@@ -166,9 +190,14 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new(manager.Display, manager.Texture, ref parent, surface,
+        Drawable drawable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, surface,
             startIndex, layer);
         manager.Drawables.Add(drawable);
         return drawable;
     }
+
+    protected virtual void InvokeOnStart() => OnStart?.Invoke();
+    protected virtual void InvokeOnUpdate() => OnUpdate?.Invoke();
+    protected virtual void InvokeOnLateUpdate() => OnLateUpdate?.Invoke();
+    protected virtual void InvokeOnClose() => OnClose?.Invoke();
 }
