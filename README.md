@@ -24,5 +24,6 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
-- Add scrollwheel rotation
-- Add logic for all blocks
+- Add scrollwheel rotation, right click to delete, clear pallete
+- Add logic for all blocks + drag to draw
+- Add save strings
