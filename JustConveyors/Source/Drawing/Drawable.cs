@@ -8,7 +8,7 @@ internal class Drawable : Component
 {
     public SDL.SDL_Rect Transform;
 
-    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+    protected Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
         int startSurfaceIndex, uint layer)
         : base(display, texture)
     {
@@ -16,20 +16,43 @@ internal class Drawable : Component
         Transform = transform;
         CurrentSurfaceIndex = startSurfaceIndex;
         Layer = layer;
+        ParentPool = pool;
+        SetSurface(startSurfaceIndex);
     }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="display"></param>
+    /// <param name="texture"></param>
+    /// <param name="transform"></param>
+    /// <param name="pool"></param>
+    /// <param name="startSurfaceIndex">startSurfaceIndex is ignored.</param>
+    /// <param name="layer"></param>
+    /// <param name="startRotation"></param>
+    public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, TexturePool pool,
+        int startSurfaceIndex, uint layer, TransformFlags startRotation)
+        : this(display, texture, ref transform, pool, startSurfaceIndex, layer) =>
+        SetSurface(startRotation);
 
     public Drawable(Display display, Texture texture, ref SDL.SDL_Rect transform, IntPtr surface,
         int startSurfaceIndex, uint layer)
         : base(display, texture)
     {
-        Surfaces = new List<nint>(1) { surface };
+        Surfaces = new List<(IntPtr, TransformFlags)>(1) { (surface, TransformFlags.None) };
         Transform = transform;
         CurrentSurfaceIndex = startSurfaceIndex;
         Layer = layer;
+        SetSurface(startSurfaceIndex);
     }
 
-    public List<nint> Surfaces { get; }
-    public int CurrentSurfaceIndex { get; set; }
+    public TexturePool ParentPool { get; }
+
+    public (int X, int Y) WorldSpaceTileTransform => Coordinates.GetWorldSpaceTile(Transform);
+
+    public TransformFlags Rotation { get; protected set; }
+
+    public List<(IntPtr surface, TransformFlags flag)> Surfaces { get; }
+    public int CurrentSurfaceIndex { get; protected set; }
     public uint Layer { get; set; }
 
     protected override void Start()
@@ -47,13 +70,34 @@ internal class Drawable : Component
     {
         for (int i = startIndex; i < endIndex; i++)
         {
-            SDL.SDL_SetSurfaceBlendMode(Surfaces[i],
+            SDL.SDL_SetSurfaceBlendMode(Surfaces[i].surface,
                 SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND);
-            SDL.SDL_SetSurfaceAlphaMod(Surfaces[i], alpha);
+            SDL.SDL_SetSurfaceAlphaMod(Surfaces[i].surface, alpha);
         }
     }
 
-    protected override void Update() => Texture.DrawSurface(Surfaces[CurrentSurfaceIndex], ref Transform, Layer);
+    public void SetSurface(TransformFlags flag)
+    {
+        if (flag != TransformFlags.IndexZero)
+        {
+            Rotation = flag;
+            CurrentSurfaceIndex = Surfaces.FindIndex(x => x.flag == flag);
+        }
+        else
+        {
+            Rotation = Surfaces[0].flag;
+            CurrentSurfaceIndex = 0;
+        }
+    }
+
+    public void SetSurface(int index)
+    {
+        CurrentSurfaceIndex = index;
+        Rotation = Surfaces[index].flag;
+    }
+
+    protected override void Update() =>
+        Texture.DrawSurface(Surfaces[CurrentSurfaceIndex].surface, ref Transform, Layer);
 
     protected override void LateUpdate()
     {
@@ -61,7 +105,7 @@ internal class Drawable : Component
 
     public static Drawable Instantiate(DrawableManager manager, int screenSpaceCoordX, int screenSpaceCoordY,
         TexturePool pool,
-        int startIndex, uint layer)
+        int startIndex, uint layer, TransformFlags startRotation)
     {
         SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
         {
@@ -88,7 +132,7 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new(manager.Display, manager.Texture, ref parent, pool, startIndex, layer);
+        Drawable drawable = new(manager.Display, manager.Texture, ref parent, pool, startIndex, layer, startRotation);
         manager.Drawables.Add(drawable);
         return drawable;
     }
@@ -122,7 +166,8 @@ internal class Drawable : Component
             return null;
         }
 
-        Drawable drawable = new(manager.Display, manager.Texture, ref parent, surface, startIndex, layer);
+        Drawable drawable = new(manager.Display, manager.Texture, ref parent, surface,
+            startIndex, layer);
         manager.Drawables.Add(drawable);
         return drawable;
     }

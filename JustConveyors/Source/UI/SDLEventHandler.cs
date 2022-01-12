@@ -8,8 +8,6 @@ namespace JustConveyors.Source.UI;
 
 internal class SDLEventHandler
 {
-    public static Drawable ActiveBlock { get; set; }
-
     private readonly Display _display;
     private readonly DrawableManager _drawableManager;
     private Vector2 _clickDownFocus;
@@ -21,15 +19,26 @@ internal class SDLEventHandler
     {
         _display = display;
         _drawableManager = drawableManager;
+        GUI.OnActiveSurfaceChanged += OnActiveSurfaceChanged;
+        GUI.OnActiveSurfaceTransformChanged += OnActiveSurfaceTransformChanged;
+        OnActiveSurfaceChanged(PoolResources.BridgeConveyorPool);
+    }
 
-        //Temp: move this later
-        IntPtr cursorSurface = SDL_CreateRGBSurface(0, 16, 16, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-        SDL_BlitSurface(PoolResources.JunctionPool.Surfaces[0], IntPtr.Zero, cursorSurface, IntPtr.Zero);
-        ActiveBlock = Drawable.Instantiate(_drawableManager, (int)Coordinates.CenterScr.X,
-            (int)Coordinates.CenterScr.Y, cursorSurface, 0, 5);
+    public static Drawable ActiveBlock { get; private set; }
+
+    private void OnActiveSurfaceTransformChanged(TransformFlags newFlag) => ActiveBlock.SetSurface(newFlag);
+
+    private void OnActiveSurfaceChanged(TexturePool newSurface)
+    {
+        ActiveBlock?.ParentPool?.Dispose();
+        ActiveBlock?.Close();
+        ActiveBlock = Drawable.Instantiate(_drawableManager, Configuration.ControlsWidth, Configuration.WindowSizeY,
+            new TexturePool(newSurface), 0, 5,
+            TransformFlags.IndexZero);
         ActiveBlock.SetAlpha(100, 0, 1);
     }
 
+    //TODO: Add scroll wheel rotation cycling
     public bool PollEvents()
     {
         while (SDL_PollEvent(out SDL_Event e) != 0)
@@ -63,9 +72,20 @@ internal class SDLEventHandler
                         {
                             if (!_isWaitingMouseLeftUp)
                             {
-                                Animatable.Instantiate(_drawableManager, Coordinates.PointingToTileScreenSpace.X,
-                                    Coordinates.PointingToTileScreenSpace.Y, PoolResources.JunctionPool, 0, 100, true,
-                                    2);
+                                if (ActiveBlock.ParentPool.IsAninmatable)
+                                {
+                                    Animatable.Instantiate(_drawableManager, Coordinates.PointingToTileScreenSpace.X,
+                                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
+                                        100, true,
+                                        2);
+                                }
+                                else
+                                {
+                                    Drawable.Instantiate(_drawableManager, Coordinates.PointingToTileScreenSpace.X,
+                                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
+                                        2,
+                                        ActiveBlock.Rotation);
+                                }
                             }
 
                             _isWaitingMouseLeftUp = true;

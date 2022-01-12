@@ -20,7 +20,7 @@ internal abstract class Component
     protected abstract void Update();
     protected abstract void LateUpdate();
 
-    protected virtual void Close()
+    public virtual void Close()
     {
         Program.OnStart -= Start;
         Program.OnUpdate -= Update;

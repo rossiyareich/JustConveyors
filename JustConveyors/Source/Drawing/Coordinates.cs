@@ -50,4 +50,7 @@ internal static class Coordinates
             Camera2D.FocusPxs.Y + Configuration.WindowSizeY / 2f / Camera2D.M);
         return (pointingX / 16 * 16, pointingY / 16 * 16);
     }
+
+    public static (int X, int Y) GetWorldSpaceTile(SDL_Rect rect) =>
+        ((rect.x - Configuration.ControlsWidth) / 16, rect.y / 16);
 }

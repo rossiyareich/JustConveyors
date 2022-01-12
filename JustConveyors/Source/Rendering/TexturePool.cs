@@ -1,26 +1,42 @@
-﻿using SDL2;
+﻿using JustConveyors.Source.Drawing;
+using SDL2;
 
 namespace JustConveyors.Source.Rendering;
 
 internal class TexturePool : IDisposable
 {
-    public TexturePool(params string[] imagePaths)
+    public TexturePool(TexturePool existing) : this(
+        existing.IsAninmatable, existing.ImageList.ToArray())
     {
-        Surfaces = new List<IntPtr>();
-        ImagePathList = new List<string>();
-        ImagePathList.AddRange(imagePaths);
+        foreach ((IntPtr surface, TransformFlags flag) oldSurface in existing.Surfaces)
+        {
+            Surfaces.Add((Texture.Copy(oldSurface.surface), oldSurface.flag));
+        }
+
+        OriginalPool = existing;
     }
 
-    public List<IntPtr> Surfaces { get; }
-    public List<string> ImagePathList { get; }
+    public TexturePool(bool isAnimatable, params (string, TransformFlags)[] images)
+    {
+        IsAninmatable = isAnimatable;
+        Surfaces = new List<(IntPtr, TransformFlags)>();
+        ImageList = new List<(string, TransformFlags)>();
+        ImageList.AddRange(images);
+    }
+
+    public TexturePool OriginalPool { get; }
+
+    public bool IsAninmatable { get; }
+    public List<(IntPtr surface, TransformFlags flag)> Surfaces { get; }
+    public List<(string, TransformFlags)> ImageList { get; }
 
     public void Dispose()
     {
-        foreach (nint surface in Surfaces)
+        foreach ((IntPtr surface, TransformFlags flag) surface in Surfaces)
         {
-            if (surface != 0)
+            if (surface.surface != IntPtr.Zero)
             {
-                SDL.SDL_FreeSurface(surface);
+                SDL.SDL_FreeSurface(surface.surface);
             }
         }
     }
@@ -29,9 +45,9 @@ internal class TexturePool : IDisposable
     {
         SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG);
 
-        foreach (string imagePath in ImagePathList)
+        foreach ((string path, TransformFlags flag) image in ImageList)
         {
-            Surfaces.Add(SDL_image.IMG_Load(imagePath));
+            Surfaces.Add((SDL_image.IMG_Load(image.path), image.flag));
         }
 
         SDL_image.IMG_Quit();
