@@ -21,6 +21,11 @@ internal class testConveyorScript : AnimatableScript
         {
             Animatable.Transform = Animatable.Transform with { x = Animatable.Transform.x + 16 };
             _movementWatch.Restart();
+            Debug.WriteLine(Animatable.Manager.GetDrawable<testConveyorScript>(
+                (Animatable.WorldSpaceTileTransform.X, Animatable.WorldSpaceTileTransform.Y), true
+            ) is null
+                ? "no"
+                : "yes");
         }
     }
 

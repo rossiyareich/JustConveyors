@@ -77,7 +77,7 @@ internal class Animatable : Drawable
 
         Animatable animatable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, pool, startIndex,
             layer,
-            frameIntervalMilliseconds, startState);
+            frameIntervalMilliseconds, startState) { Manager = manager };
         manager.Drawables.Add(animatable);
         return animatable;
     }

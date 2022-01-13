@@ -51,6 +51,8 @@ internal class Drawable : Component
         SetSurface(startSurfaceIndex);
     }
 
+    public DrawableManager Manager { get; init; }
+
     public TexturePool ParentPool { get; }
 
     public (int X, int Y) WorldSpaceTileTransform => Coordinates.GetWorldSpaceTile(Transform);
@@ -151,7 +153,7 @@ internal class Drawable : Component
         }
 
         Drawable drawable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, pool, startIndex,
-            layer, startRotation);
+            layer, startRotation) { Manager = manager };
         manager.Drawables.Add(drawable);
         return drawable;
     }
@@ -186,7 +188,7 @@ internal class Drawable : Component
         }
 
         Drawable drawable = new(manager.Display, manager.Texture, manager.EventHolder, ref parent, surface,
-            startIndex, layer);
+            startIndex, layer) { Manager = manager };
         manager.Drawables.Add(drawable);
         return drawable;
     }
