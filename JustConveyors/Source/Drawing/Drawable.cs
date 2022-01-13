@@ -192,4 +192,10 @@ internal class Drawable : Component
         manager.Drawables.Add(drawable);
         return drawable;
     }
+
+    public override void Close()
+    {
+        Script = null;
+        base.Close();
+    }
 }

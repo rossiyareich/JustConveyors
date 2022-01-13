@@ -17,20 +17,19 @@ internal class testConveyorScript : AnimatableScript
 
     public override void Update()
     {
-        if (_movementWatch.ElapsedMilliseconds > 500)
+        //if (_movementWatch.ElapsedMilliseconds > 1)
         {
-            Animatable.Transform = Animatable.Transform with { x = Animatable.Transform.x + 16 };
-            _movementWatch.Restart();
-            Debug.WriteLine(Animatable.Manager.GetDrawable<testConveyorScript>(
-                (Animatable.WorldSpaceTileTransform.X, Animatable.WorldSpaceTileTransform.Y), true
-            ) is null
-                ? "no"
-                : "yes");
+            Animatable.Transform = Animatable.Transform with
+            {
+                x = Animatable.Transform.x + 0, y = Animatable.Transform.y + 16
+            };
+            //_movementWatch.Restart();
+            //Debug.WriteLine(Animatable.Manager.GetDrawable<testConveyorScript>(
+            //    (Animatable.WorldSpaceTileTransform.X, Animatable.WorldSpaceTileTransform.Y), true
+            //) is null
+            //    ? "no"
+            //    : "yes");
         }
-    }
-
-    public override void LateUpdate()
-    {
     }
 
     public override void Close()

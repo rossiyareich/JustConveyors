@@ -60,47 +60,47 @@ internal static class GUI
         #region Tile Selection
 
         int selection = oldSelection;
-        ImGui.BeginChild("Tile Selection", new Vector2(Configuration.ControlsWidth - 17, 200), true);
+        ImGui.BeginChild("TileSelection", new Vector2(Configuration.ControlsWidth - 17, 200), true);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Bridge Conveyor");
         ImGui.SameLine(200);
-        ImGui.RadioButton(" ", ref selection, 0);
+        ImGui.RadioButton(new string(' ', 1), ref selection, 0);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Titanium Conveyor");
         ImGui.SameLine(200);
-        ImGui.RadioButton("  ", ref selection, 1);
+        ImGui.RadioButton(new string(' ', 2), ref selection, 1);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Thorium Conveyor");
         ImGui.SameLine(200);
-        ImGui.RadioButton("   ", ref selection, 2);
+        ImGui.RadioButton(new string(' ', 3), ref selection, 2);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Armored Conveyor");
         ImGui.SameLine(200);
-        ImGui.RadioButton("    ", ref selection, 3);
+        ImGui.RadioButton(new string(' ', 4), ref selection, 3);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Junction");
         ImGui.SameLine(200);
-        ImGui.RadioButton("     ", ref selection, 4);
+        ImGui.RadioButton(new string(' ', 5), ref selection, 4);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Router");
         ImGui.SameLine(200);
-        ImGui.RadioButton("      ", ref selection, 5);
+        ImGui.RadioButton(new string(' ', 6), ref selection, 5);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Ruby Source");
         ImGui.SameLine(200);
-        ImGui.RadioButton("       ", ref selection, 6);
+        ImGui.RadioButton(new string(' ', 7), ref selection, 6);
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Ruby Sink");
         ImGui.SameLine(200);
-        ImGui.RadioButton("        ", ref selection, 7);
+        ImGui.RadioButton(new string(' ', 8), ref selection, 7);
 
         if (oldSelection != selection)
         {

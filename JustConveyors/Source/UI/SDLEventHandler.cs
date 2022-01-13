@@ -67,7 +67,16 @@ internal class SDLEventHandler
                     //TODO: Keyboard events
                     break;
                 case SDL_EventType.SDL_MOUSEBUTTONDOWN:
-                    if (Coordinates.PointingToRaw.X > Configuration.ControlsWidth)
+
+                    if (e.button.button == SDL_BUTTON_MIDDLE &&
+                        Coordinates.PointingToRaw.X > Configuration.ControlsWidth)
+                    {
+                        _clickDownFocus = Coordinates.PointingToRaw;
+                        _clickDownInitFocus = Camera2D.FocusPxs;
+                        _isWaitingMouseMiddleUp = true;
+                    }
+
+                    if (Coordinates.IsInCanvasBounds)
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
@@ -93,17 +102,17 @@ internal class SDLEventHandler
 
                             _isWaitingMouseLeftUp = true;
                         }
-                        else if (e.button.button == SDL_BUTTON_MIDDLE)
-                        {
-                            _clickDownFocus = Coordinates.PointingToRaw;
-                            _clickDownInitFocus = Camera2D.FocusPxs;
-                            _isWaitingMouseMiddleUp = true;
-                        }
                     }
 
                     break;
                 case SDL_EventType.SDL_MOUSEBUTTONUP:
-                    if (Coordinates.PointingToRaw.X > Configuration.ControlsWidth)
+                    if (e.button.button == SDL_BUTTON_MIDDLE &&
+                        Coordinates.PointingToRaw.X > Configuration.ControlsWidth)
+                    {
+                        _isWaitingMouseMiddleUp = false;
+                    }
+
+                    if (Coordinates.IsInCanvasBounds)
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
@@ -111,10 +120,6 @@ internal class SDLEventHandler
                             {
                                 _isWaitingMouseLeftUp = false;
                             }
-                        }
-                        else if (e.button.button == SDL_BUTTON_MIDDLE)
-                        {
-                            _isWaitingMouseMiddleUp = false;
                         }
                     }
 

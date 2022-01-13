@@ -12,7 +12,13 @@ internal abstract class DrawableScript : IScript
 
     public abstract void Update();
 
-    public abstract void LateUpdate();
+    public virtual void LateUpdate()
+    {
+        if (Drawable.Transform.x > Configuration.WindowSizeX ||
+            Drawable.Transform.x < Configuration.ControlsWidth ||
+            Drawable.Transform.y > Configuration.WindowSizeY || Drawable.Transform.y < 0)
+            Drawable.Close();
+    }
 
     public abstract void Close();
 }

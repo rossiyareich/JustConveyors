@@ -11,6 +11,11 @@ internal static class Coordinates
     public static (int X, int Y) PointingToTileScreenSpace;
     public static Vector2 CenterScr => new Vector2(Configuration.WindowSizeX, Configuration.WindowSizeY) / 2f;
 
+    public static bool IsInCanvasBounds => PointingToScreenSpace.X >= Configuration.ControlsWidth &&
+                                           PointingToScreenSpace.X <= Configuration.WindowSizeX &&
+                                           PointingToScreenSpace.Y >= 0 &&
+                                           PointingToScreenSpace.Y <= Configuration.WindowSizeY;
+
     public static void UpdatePointer()
     {
         SDL_GetMouseState(out int mouseX, out int mouseY);

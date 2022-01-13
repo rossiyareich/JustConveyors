@@ -12,7 +12,13 @@ internal abstract class AnimatableScript : IScript
 
     public abstract void Update();
 
-    public abstract void LateUpdate();
+    public virtual void LateUpdate()
+    {
+        if (Animatable.Transform.x > Configuration.WindowSizeX ||
+            Animatable.Transform.x < Configuration.ControlsWidth ||
+            Animatable.Transform.y > Configuration.WindowSizeY || Animatable.Transform.y < 0)
+            Animatable.Close();
+    }
 
     public abstract void Close();
 }
