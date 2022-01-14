@@ -13,8 +13,17 @@ internal class SDLEventHandler
     private readonly DrawableManager _drawableManager;
     private Vector2 _clickDownFocus;
     private Vector2 _clickDownInitFocus;
-    private bool _isWaitingMouseLeftUp;
+
+    //private bool _isWaitingMouseLeftUp;
+    private bool _isMouseLeftDragging;
+
+    //private bool _isWaitingMouseRightUp;
+    private bool _isMouseRightDragging;
+
     private bool _isWaitingMouseMiddleUp;
+
+    private (int X, int Y) _oldTileScreenSpaceMouseLeft;
+    private (int X, int Y) _oldTileScreenSpaceMouseRight;
 
     public SDLEventHandler(Display display, DrawableManager drawableManager)
     {
@@ -39,9 +48,6 @@ internal class SDLEventHandler
         ActiveBlock.SetAlpha(100, 0, ActiveBlock.Surfaces.Count);
     }
 
-    //TODO: Add scroll wheel rotation cycling
-    //TODO: Add right click to delete
-    //TODO: Add dragging
     public bool PollEvents()
     {
         while (SDL_PollEvent(out SDL_Event e) != 0)
@@ -58,16 +64,50 @@ internal class SDLEventHandler
                 Camera2D.ChangeFocusScrRaw(_clickDownInitFocus + (Coordinates.PointingToRaw - _clickDownFocus));
             }
 
+
+            if (_isMouseLeftDragging && _oldTileScreenSpaceMouseLeft != Coordinates.PointingToTileScreenSpace)
+            {
+                if (ActiveBlock.ParentPool.IsAninmatable)
+                {
+                    Animatable animatable = Animatable.Instantiate(_drawableManager,
+                        Coordinates.PointingToTileScreenSpace.X,
+                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
+                        100, true,
+                        2);
+                    animatable.Script =
+                        Activator.CreateInstance(animatable.ParentPool.ScriptType, animatable) as
+                            AnimatableScript;
+                }
+                else
+                {
+                    Drawable drawable = Drawable.Instantiate(_drawableManager,
+                        Coordinates.PointingToTileScreenSpace.X,
+                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
+                        2,
+                        ActiveBlock.Rotation);
+                    drawable.Script =
+                        Activator.CreateInstance(drawable.ParentPool.ScriptType, drawable) as
+                            DrawableScript;
+                }
+
+                _oldTileScreenSpaceMouseLeft = Coordinates.PointingToTileScreenSpace;
+            }
+
+            if (_isMouseRightDragging && _oldTileScreenSpaceMouseRight != Coordinates.PointingToTileScreenSpace)
+            {
+                _drawableManager
+                    .GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
+                        ActiveBlock)?.LastOrDefault(x =>
+                        ScriptHelper.NonInteractableScriptTypes.Any(y => y != x.ParentPool.ScriptType))
+                    ?.Close();
+                _isMouseRightDragging = false;
+                _oldTileScreenSpaceMouseRight = Coordinates.PointingToTileScreenSpace;
+            }
+
             switch (e.type)
             {
                 case SDL_EventType.SDL_QUIT:
                     return false;
-                case SDL_EventType.SDL_KEYDOWN:
-                    //TODO: Keyboard events
-                    break;
-                case SDL_EventType.SDL_KEYUP:
-                    //TODO: Keyboard events
-                    break;
                 case SDL_EventType.SDL_MOUSEBUTTONDOWN:
 
                     if (e.button.button == SDL_BUTTON_MIDDLE &&
@@ -82,33 +122,14 @@ internal class SDLEventHandler
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            if (!_isWaitingMouseLeftUp)
-                            {
-                                if (ActiveBlock.ParentPool.IsAninmatable)
-                                {
-                                    Animatable animatable = Animatable.Instantiate(_drawableManager,
-                                        Coordinates.PointingToTileScreenSpace.X,
-                                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
-                                        100, true,
-                                        2);
-                                    animatable.Script =
-                                        Activator.CreateInstance(animatable.ParentPool.ScriptType, animatable) as
-                                            AnimatableScript;
-                                }
-                                else
-                                {
-                                    Drawable drawable = Drawable.Instantiate(_drawableManager,
-                                        Coordinates.PointingToTileScreenSpace.X,
-                                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
-                                        2,
-                                        ActiveBlock.Rotation);
-                                    drawable.Script =
-                                        Activator.CreateInstance(drawable.ParentPool.ScriptType, drawable) as
-                                            DrawableScript;
-                                }
-                            }
+                            //_isWaitingMouseLeftUp = true;
+                            _isMouseLeftDragging = true;
+                        }
 
-                            _isWaitingMouseLeftUp = true;
+                        if (e.button.button == SDL_BUTTON_RIGHT)
+                        {
+                            //_isWaitingMouseRightUp = true;
+                            _isMouseRightDragging = true;
                         }
                     }
 
@@ -124,10 +145,13 @@ internal class SDLEventHandler
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            if (_isWaitingMouseLeftUp)
-                            {
-                                _isWaitingMouseLeftUp = false;
-                            }
+                            //_isWaitingMouseLeftUp = false;
+                            _isMouseLeftDragging = false;
+                        }
+                        else if (e.button.button == SDL_BUTTON_RIGHT)
+                        {
+                            //_isWaitingMouseRightUp = false;
+                            _isMouseRightDragging = false;
                         }
                     }
 
@@ -144,6 +168,21 @@ internal class SDLEventHandler
                                 {
                                     ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
                                 }
+                                else if ((int)ActiveBlock.Rotation == 10)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)5);
+                                }
+
+                                break;
+                            case ScrollTransformFlags.HorizontalVertical: //9->10
+                                if ((int)ActiveBlock.Rotation is >= 9 and < 10)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
+                                }
+                                else if ((int)ActiveBlock.Rotation == 10)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)9);
+                                }
 
                                 break;
                         }
@@ -158,6 +197,21 @@ internal class SDLEventHandler
                                 if ((int)ActiveBlock.Rotation is > 5 and <= 10)
                                 {
                                     ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation - 1));
+                                }
+                                else if ((int)ActiveBlock.Rotation == 5)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)10);
+                                }
+
+                                break;
+                            case ScrollTransformFlags.HorizontalVertical: //9->10
+                                if ((int)ActiveBlock.Rotation is > 9 and <= 10)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
+                                }
+                                else if ((int)ActiveBlock.Rotation == 9)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)10);
                                 }
 
                                 break;

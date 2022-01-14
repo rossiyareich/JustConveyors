@@ -23,7 +23,7 @@ internal class PoolResources : IDisposable
         (@"Resources\Assets\conveyors\output (BluCC) 2.png", TransformFlags.DirSW),
         (@"Resources\Assets\conveyors\output (BluCC) 3.png", TransformFlags.DirSE))
     {
-        ScrollType = ScrollTransformFlags.SixDirections
+        ScrollType = ScrollTransformFlags.HorizontalVertical
     };
 
     public static readonly TexturePool PurpleConveyorPool = new(false, typeof(ThoriumConveyorBaseScript),
@@ -34,7 +34,7 @@ internal class PoolResources : IDisposable
         (@"Resources\Assets\conveyors\output (PurCC) 2.png", TransformFlags.DirSW),
         (@"Resources\Assets\conveyors\output (PurCC) 3.png", TransformFlags.DirSE))
     {
-        ScrollType = ScrollTransformFlags.SixDirections
+        ScrollType = ScrollTransformFlags.HorizontalVertical
     };
 
     public static readonly TexturePool RedConveyorPool = new(false, typeof(ArmoredConveyorBaseScript),
@@ -45,7 +45,7 @@ internal class PoolResources : IDisposable
         (@"Resources\Assets\conveyors\output (RedCC) 2.png", TransformFlags.DirSW),
         (@"Resources\Assets\conveyors\output (RedCC) 3.png", TransformFlags.DirSE))
     {
-        ScrollType = ScrollTransformFlags.SixDirections
+        ScrollType = ScrollTransformFlags.HorizontalVertical
     };
 
     public static readonly TexturePool BlueConveyorArrowPool = new(false, typeof(TitaniumConveyorArwScript),
