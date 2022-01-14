@@ -36,10 +36,12 @@ internal class SDLEventHandler
         ActiveBlock = Drawable.Instantiate(_drawableManager, Configuration.ControlsWidth, Configuration.WindowSizeY,
             new TexturePool(newSurface), 0, 5,
             TransformFlags.IndexZero);
-        ActiveBlock.SetAlpha(100, 0, 1);
+        ActiveBlock.SetAlpha(100, 0, ActiveBlock.Surfaces.Count);
     }
 
     //TODO: Add scroll wheel rotation cycling
+    //TODO: Add right click to delete
+    //TODO: Add dragging
     public bool PollEvents()
     {
         while (SDL_PollEvent(out SDL_Event e) != 0)
@@ -89,14 +91,20 @@ internal class SDLEventHandler
                                         Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
                                         100, true,
                                         2);
-                                    animatable.Script = new testConveyorScript(animatable);
+                                    animatable.Script =
+                                        Activator.CreateInstance(animatable.ParentPool.ScriptType, animatable) as
+                                            AnimatableScript;
                                 }
                                 else
                                 {
-                                    Drawable.Instantiate(_drawableManager, Coordinates.PointingToTileScreenSpace.X,
+                                    var drawable = Drawable.Instantiate(_drawableManager,
+                                        Coordinates.PointingToTileScreenSpace.X,
                                         Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
                                         2,
                                         ActiveBlock.Rotation);
+                                    drawable.Script =
+                                        Activator.CreateInstance(drawable.ParentPool.ScriptType, drawable) as
+                                            DrawableScript;
                                 }
                             }
 
@@ -120,6 +128,36 @@ internal class SDLEventHandler
                             {
                                 _isWaitingMouseLeftUp = false;
                             }
+                        }
+                    }
+
+                    break;
+                case SDL_EventType.SDL_MOUSEWHEEL:
+                    if (e.wheel.y > 0) // scroll up
+                    {
+                        switch (ActiveBlock.ParentPool.ScrollType)
+                        {
+                            case ScrollTransformFlags.NoScroll:
+                                break;
+                            case ScrollTransformFlags.SixDirections: //5->10
+                                if ((int)ActiveBlock.Rotation is >= 5 and < 10)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
+                                }
+
+                                break;
+                        }
+                    }
+                    else if (e.wheel.y < 0) // scroll down
+                    {
+                        switch (ActiveBlock.ParentPool.ScrollType)
+                        {
+                            case ScrollTransformFlags.NoScroll:
+                                break;
+                            case ScrollTransformFlags.SixDirections:
+                                if ((int)ActiveBlock.Rotation is > 5 and <= 10)
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation - 1));
+                                break;
                         }
                     }
 

@@ -14,7 +14,8 @@ internal static class Coordinates
     public static bool IsInCanvasBounds => PointingToScreenSpace.X >= Configuration.ControlsWidth &&
                                            PointingToScreenSpace.X <= Configuration.WindowSizeX &&
                                            PointingToScreenSpace.Y >= 0 &&
-                                           PointingToScreenSpace.Y <= Configuration.WindowSizeY;
+                                           PointingToScreenSpace.Y <= Configuration.WindowSizeY &&
+                                           PointingToRaw.X >= Configuration.ControlsWidth;
 
     public static void UpdatePointer()
     {

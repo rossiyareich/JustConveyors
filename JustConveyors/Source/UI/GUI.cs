@@ -12,6 +12,7 @@ internal static class GUI
     public static Action<TexturePool> OnActiveSurfaceChanged;
     public static Action<TransformFlags> OnActiveSurfaceTransformChanged;
     private static int oldSelection;
+    public static bool IsPause;
 
     public static void Draw()
     {
@@ -27,6 +28,21 @@ internal static class GUI
 
         ImGui.Text($"FPS: {1d / Time.DeltaTime:0}");
         ImGui.Text($"Frametime: {Time.DeltaTime * 1000d:0} ms");
+
+        ImGui.EndChild();
+
+        #endregion
+
+        ImGui.Dummy(new Vector2(0, 2));
+
+        #region Time
+
+        ImGui.BeginChild("Time", new Vector2(Configuration.ControlsWidth - 17, 35), true);
+
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text("    Paused");
+        ImGui.SameLine(200);
+        ImGui.Checkbox(new string(' ', 0), ref IsPause);
 
         ImGui.EndChild();
 

@@ -48,6 +48,9 @@ internal class DrawableManager : IDisposable
     public IEnumerable<Drawable> GetDrawables<TScript>((int X, int Y) gridLocation) where TScript : IScript =>
         Drawables.Where(x => x.WorldSpaceTileTransform == gridLocation && x.Script is TScript);
 
+    public IEnumerable<Drawable> GetDrawables<TScript>(params (int X, int Y)[] gridLocations) where TScript : IScript =>
+        Drawables.Where(x => gridLocations.Any(y => y == x.WorldSpaceTileTransform) && x.Script is TScript);
+
     public IEnumerable<Drawable> GetDrawables<TScript>((int X, int Y) gridLocation, Drawable exclude)
         where TScript : IScript =>
         Drawables.Where(x => x.WorldSpaceTileTransform == gridLocation && x != exclude && x.Script is TScript);

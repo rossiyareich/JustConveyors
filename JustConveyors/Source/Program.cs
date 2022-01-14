@@ -41,6 +41,8 @@ internal class Program : IEventHolder
                     break;
                 }
 
+                if (GUI.IsPause)
+                    Time.DeltaTime = 0d;
                 grid.Render();
                 @this.OnUpdate?.Invoke();
                 display.Renderer.NewFrame();

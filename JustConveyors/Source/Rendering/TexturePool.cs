@@ -6,7 +6,7 @@ namespace JustConveyors.Source.Rendering;
 internal class TexturePool : IDisposable
 {
     public TexturePool(TexturePool existing) : this(
-        existing.IsAninmatable, existing.ImageList.ToArray())
+        existing.IsAninmatable, existing.ScriptType, existing.ImageList.ToArray())
     {
         foreach ((IntPtr surface, TransformFlags flag) oldSurface in existing.Surfaces)
         {
@@ -14,11 +14,13 @@ internal class TexturePool : IDisposable
         }
 
         OriginalPool = existing;
+        ScrollType = existing.ScrollType;
     }
 
-    public TexturePool(bool isAnimatable, params (string, TransformFlags)[] images)
+    public TexturePool(bool isAnimatable, Type scriptType, params (string, TransformFlags)[] images)
     {
         IsAninmatable = isAnimatable;
+        ScriptType = scriptType;
         Surfaces = new List<(IntPtr, TransformFlags)>();
         ImageList = new List<(string, TransformFlags)>();
         ImageList.AddRange(images);
@@ -26,6 +28,8 @@ internal class TexturePool : IDisposable
 
     public TexturePool OriginalPool { get; }
 
+    public ScrollTransformFlags ScrollType { get; init; } = ScrollTransformFlags.NoScroll;
+    public Type ScriptType { get; }
     public bool IsAninmatable { get; }
     public List<(IntPtr surface, TransformFlags flag)> Surfaces { get; }
     public List<(string, TransformFlags)> ImageList { get; }
