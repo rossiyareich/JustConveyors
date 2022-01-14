@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
 using SDL2;
 
@@ -16,47 +14,53 @@ internal class SourceScript : DrawableScript
     {
     }
 
-    //TODO: There's some weird rounding error here that's causing a weird behaviour on rubies spawned on conveyors
+    //TODO: Only pump out more when next conveyor is not clogged
     public override void Update()
     {
-        var x = Drawable.WorldSpaceTileTransform.X;
-        var y = Drawable.WorldSpaceTileTransform.Y;
-        var X = Drawable.Transform.x;
-        var Y = Drawable.Transform.y;
+        int X = Drawable.Transform.x;
+        int Y = Drawable.Transform.y;
 
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>((x + 1, y), true) is not null &&
-            Drawable.Manager.GetDrawable<RubyScript>((x + 1, y), true) is null)
+        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { x = X + 16 }, true) is
+                not
+                null &&
+            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { x = X + 12 }, true) is null)
         {
-            var drawable = Drawable.Instantiate(Drawable.Manager, X + 12, Y, PoolResources.RubyPool, 0,
+            Drawable drawable = Drawable.Instantiate(Drawable.Manager, X + 12, Y, PoolResources.RubyPool, 0,
                 6,
                 TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect() { x = 1 });
+            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { x = 1 });
         }
 
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>((x - 1, y), true) is not null &&
-            Drawable.Manager.GetDrawable<RubyScript>((x - 1, y), true) is null)
+        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { x = X - 16 }, true) is
+                not
+                null &&
+            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { x = X - 12 }, true) is null)
         {
-            var drawable = Drawable.Instantiate(Drawable.Manager, X - 12, Y, PoolResources.RubyPool, 0, 6,
+            Drawable drawable = Drawable.Instantiate(Drawable.Manager, X - 12, Y, PoolResources.RubyPool, 0, 6,
                 TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect() { x = -1 });
+            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { x = -1 });
         }
 
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>((x, y + 1), true) is not null &&
-            Drawable.Manager.GetDrawable<RubyScript>((x, y + 1), true) is null)
+        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y + 16 }, true) is
+                not
+                null &&
+            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { y = Y + 12 }, true) is null)
         {
-            var drawable =
+            Drawable drawable =
                 Drawable.Instantiate(Drawable.Manager, X, Y + 12, PoolResources.RubyPool, 0, 6,
                     TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect() { y = 1 });
+            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { y = 1 });
         }
 
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>((x, y - 1), true) is not null &&
-            Drawable.Manager.GetDrawable<RubyScript>((x, y - 1), true) is null)
+        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y - 16 }, true) is
+                not
+                null &&
+            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { y = Y - 12 }, true) is null)
         {
-            var drawable =
+            Drawable drawable =
                 Drawable.Instantiate(Drawable.Manager, X, Y - 12, PoolResources.RubyPool, 0, 6,
                     TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect() { y = -1 });
+            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { y = -1 });
         }
     }
 

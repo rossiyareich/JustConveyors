@@ -3,5 +3,5 @@
 public enum ScrollTransformFlags
 {
     NoScroll,
-    SixDirections,
+    SixDirections
 }

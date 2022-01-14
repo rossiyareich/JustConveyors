@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Loop;
 using SDL2;
 
@@ -8,7 +6,7 @@ namespace JustConveyors.Source.Scripting;
 
 internal class RubyScript : DrawableScript
 {
-    SDL.SDL_Rect _deltaRect;
+    private readonly SDL.SDL_Rect _deltaRect;
 
     public RubyScript(Drawable drawable, SDL.SDL_Rect deltaRect) : base(drawable)
     {

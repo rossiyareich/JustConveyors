@@ -17,7 +17,9 @@ internal abstract class DrawableScript : IScript
         if (Drawable.Transform.x > Configuration.WindowSizeX ||
             Drawable.Transform.x < Configuration.ControlsWidth ||
             Drawable.Transform.y > Configuration.WindowSizeY || Drawable.Transform.y < 0)
+        {
             Drawable.Close();
+        }
     }
 
     public abstract void Close();

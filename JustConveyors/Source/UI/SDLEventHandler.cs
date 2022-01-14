@@ -97,7 +97,7 @@ internal class SDLEventHandler
                                 }
                                 else
                                 {
-                                    var drawable = Drawable.Instantiate(_drawableManager,
+                                    Drawable drawable = Drawable.Instantiate(_drawableManager,
                                         Coordinates.PointingToTileScreenSpace.X,
                                         Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
                                         2,
@@ -156,7 +156,10 @@ internal class SDLEventHandler
                                 break;
                             case ScrollTransformFlags.SixDirections:
                                 if ((int)ActiveBlock.Rotation is > 5 and <= 10)
+                                {
                                     ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation - 1));
+                                }
+
                                 break;
                         }
                     }

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using JustConveyors.Source.Drawing;
+﻿using JustConveyors.Source.Drawing;
 
 namespace JustConveyors.Source.Scripting;
 

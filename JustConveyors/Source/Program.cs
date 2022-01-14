@@ -42,7 +42,10 @@ internal class Program : IEventHolder
                 }
 
                 if (GUI.IsPause)
+                {
                     Time.DeltaTime = 0d;
+                }
+
                 grid.Render();
                 @this.OnUpdate?.Invoke();
                 display.Renderer.NewFrame();
