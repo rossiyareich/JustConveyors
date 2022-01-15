@@ -1,5 +1,6 @@
 ﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
+using JustConveyors.Source.UI;
 
 namespace JustConveyors.Source.Loop;
 
@@ -17,6 +18,23 @@ internal partial class DrawableManager : IDisposable
         Texture = texture;
         EventHolder = eventHolder;
         PoolResources = PoolResources.GetInstance();
+
+        GUI.OnClearPalette += () =>
+        {
+            foreach (Drawable drawable in Drawables)
+            {
+                if (drawable.ParentPool == SDLEventHandler.ActiveBlock.ParentPool)
+                {
+                    continue;
+                }
+
+                drawable.CloseStateless();
+            }
+
+            Drawable x = Drawables.FirstOrDefault(x => x.ParentPool == SDLEventHandler.ActiveBlock.ParentPool);
+            Drawables.Clear();
+            Drawables.Add(x);
+        };
     }
 
     public PoolResources PoolResources { get; }

@@ -14,16 +14,19 @@ internal class SDLEventHandler
     private Vector2 _clickDownFocus;
     private Vector2 _clickDownInitFocus;
 
-    //private bool _isWaitingMouseLeftUp;
+    private bool _isLimitDrawingToHorizontal;
+    private bool _isLimitDrawingToVertical;
+
     private bool _isMouseLeftDragging;
-
-    //private bool _isWaitingMouseRightUp;
     private bool _isMouseRightDragging;
-
+    private bool _isStopDrawingGuides;
     private bool _isWaitingMouseMiddleUp;
+    private (int X, int Y) _oldTileScreenSpaceMouseAlways;
 
     private (int X, int Y) _oldTileScreenSpaceMouseLeft;
     private (int X, int Y) _oldTileScreenSpaceMouseRight;
+    private int _permX;
+    private int _permY;
 
     public SDLEventHandler(Display display, DrawableManager drawableManager)
     {
@@ -64,30 +67,107 @@ internal class SDLEventHandler
                 Camera2D.ChangeFocusScrRaw(_clickDownInitFocus + (Coordinates.PointingToRaw - _clickDownFocus));
             }
 
-
-            if (_isMouseLeftDragging && _oldTileScreenSpaceMouseLeft != Coordinates.PointingToTileScreenSpace)
+            if (_oldTileScreenSpaceMouseAlways != Coordinates.PointingToTileScreenSpace)
             {
-                if (ActiveBlock.ParentPool.IsAninmatable)
+                if (_isLimitDrawingToVertical && _isLimitDrawingToHorizontal)
                 {
-                    Animatable animatable = Animatable.Instantiate(_drawableManager,
-                        Coordinates.PointingToTileScreenSpace.X,
-                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
-                        100, true,
-                        2);
-                    animatable.Script =
-                        Activator.CreateInstance(animatable.ParentPool.ScriptType, animatable) as
-                            AnimatableScript;
+                    if (_oldTileScreenSpaceMouseAlways.X != Coordinates.PointingToTileScreenSpace.X)
+                    {
+                        _isLimitDrawingToVertical = false;
+                        _permY = Coordinates.PointingToTileScreenSpace.Y;
+                        ScriptHelper.DestroyGuideLines(_drawableManager, (_oldTileScreenSpaceMouseAlways.X, 0),
+                            (_oldTileScreenSpaceMouseAlways.X, Configuration.WindowSizeY), TransformFlags.Vertical);
+                        ScriptHelper.DestroyGuideLines(_drawableManager,
+                            (Configuration.ControlsWidth, _oldTileScreenSpaceMouseAlways.Y),
+                            (Configuration.WindowSizeX, _oldTileScreenSpaceMouseAlways.Y), TransformFlags.Horizontal);
+                        ScriptHelper.DrawGuideLines(_drawableManager,
+                            (Configuration.ControlsWidth, Coordinates.PointingToTileScreenSpace.Y),
+                            (Configuration.WindowSizeX, Coordinates.PointingToTileScreenSpace.Y),
+                            TransformFlags.Horizontal);
+                    }
+                    else if (_oldTileScreenSpaceMouseAlways.Y != Coordinates.PointingToTileScreenSpace.Y)
+                    {
+                        _isLimitDrawingToHorizontal = false;
+                        _permX = Coordinates.PointingToTileScreenSpace.X;
+                        ScriptHelper.DestroyGuideLines(_drawableManager,
+                            (Configuration.ControlsWidth, _oldTileScreenSpaceMouseAlways.Y),
+                            (Configuration.WindowSizeX, _oldTileScreenSpaceMouseAlways.Y),
+                            TransformFlags.Horizontal);
+                        ScriptHelper.DestroyGuideLines(_drawableManager, (_oldTileScreenSpaceMouseAlways.X, 0),
+                            (_oldTileScreenSpaceMouseAlways.X, Configuration.WindowSizeY), TransformFlags.Vertical);
+                        ScriptHelper.DrawGuideLines(_drawableManager, (Coordinates.PointingToTileScreenSpace.X, 0),
+                            (Coordinates.PointingToTileScreenSpace.X, Configuration.WindowSizeY),
+                            TransformFlags.Vertical);
+                    }
+
+                    _isStopDrawingGuides = true;
                 }
-                else
+
+                if (!_isStopDrawingGuides)
                 {
-                    Drawable drawable = Drawable.Instantiate(_drawableManager,
-                        Coordinates.PointingToTileScreenSpace.X,
-                        Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
-                        2,
-                        ActiveBlock.Rotation);
-                    drawable.Script =
-                        Activator.CreateInstance(drawable.ParentPool.ScriptType, drawable) as
-                            DrawableScript;
+                    if (_isLimitDrawingToVertical)
+                    {
+                        ScriptHelper.DestroyGuideLines(_drawableManager, (_oldTileScreenSpaceMouseAlways.X, 0),
+                            (_oldTileScreenSpaceMouseAlways.X, Configuration.WindowSizeY), TransformFlags.Vertical);
+                        ScriptHelper.DrawGuideLines(_drawableManager, (Coordinates.PointingToTileScreenSpace.X, 0),
+                            (Coordinates.PointingToTileScreenSpace.X, Configuration.WindowSizeY),
+                            TransformFlags.Vertical);
+                    }
+
+                    if (_isLimitDrawingToHorizontal)
+                    {
+                        ScriptHelper.DestroyGuideLines(_drawableManager,
+                            (Configuration.ControlsWidth, _oldTileScreenSpaceMouseAlways.Y),
+                            (Configuration.WindowSizeX, _oldTileScreenSpaceMouseAlways.Y), TransformFlags.Horizontal);
+                        ScriptHelper.DrawGuideLines(_drawableManager,
+                            (Configuration.ControlsWidth, Coordinates.PointingToTileScreenSpace.Y),
+                            (Configuration.WindowSizeX, Coordinates.PointingToTileScreenSpace.Y),
+                            TransformFlags.Horizontal);
+                    }
+
+                    _oldTileScreenSpaceMouseAlways = Coordinates.PointingToTileScreenSpace;
+                }
+            }
+
+            if (_isLimitDrawingToHorizontal)
+            {
+                Coordinates.PointingToTileScreenSpace.Y = _permY;
+            }
+            else if (_isLimitDrawingToVertical)
+            {
+                Coordinates.PointingToTileScreenSpace.X = _permX;
+            }
+
+            if (_isMouseLeftDragging && _oldTileScreenSpaceMouseLeft != Coordinates.PointingToTileScreenSpace &&
+                Coordinates.IsInCanvasBounds)
+            {
+                if (!_drawableManager.GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
+                        ActiveBlock).Any(x =>
+                        ScriptHelper.NonInteractableScriptTypes.All(y => y != x.ParentPool.ScriptType)))
+                {
+                    if (ActiveBlock.ParentPool.IsAninmatable)
+                    {
+                        Animatable animatable = Animatable.Instantiate(_drawableManager,
+                            Coordinates.PointingToTileScreenSpace.X,
+                            Coordinates.PointingToTileScreenSpace.Y
+                            , ActiveBlock.ParentPool.OriginalPool, 0,
+                            100, true,
+                            2);
+                        animatable.Script =
+                            Activator.CreateInstance(animatable.ParentPool.ScriptType, animatable) as
+                                AnimatableScript;
+                    }
+                    else
+                    {
+                        Drawable drawable = Drawable.Instantiate(_drawableManager,
+                            Coordinates.PointingToTileScreenSpace.X,
+                            Coordinates.PointingToTileScreenSpace.Y, ActiveBlock.ParentPool.OriginalPool, 0,
+                            2,
+                            ActiveBlock.Rotation);
+                        drawable.Script =
+                            Activator.CreateInstance(drawable.ParentPool.ScriptType, drawable) as
+                                DrawableScript;
+                    }
                 }
 
                 _oldTileScreenSpaceMouseLeft = Coordinates.PointingToTileScreenSpace;
@@ -95,12 +175,10 @@ internal class SDLEventHandler
 
             if (_isMouseRightDragging && _oldTileScreenSpaceMouseRight != Coordinates.PointingToTileScreenSpace)
             {
-                _drawableManager
-                    .GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
-                        ActiveBlock)?.LastOrDefault(x =>
-                        ScriptHelper.NonInteractableScriptTypes.Any(y => y != x.ParentPool.ScriptType))
-                    ?.Close();
-                _isMouseRightDragging = false;
+                _drawableManager.GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
+                    ActiveBlock)?.FirstOrDefault(x =>
+                    ScriptHelper.NonInteractableScriptTypes.All(y => y != x.ParentPool.ScriptType))?.Close();
+
                 _oldTileScreenSpaceMouseRight = Coordinates.PointingToTileScreenSpace;
             }
 
@@ -108,6 +186,53 @@ internal class SDLEventHandler
             {
                 case SDL_EventType.SDL_QUIT:
                     return false;
+                case SDL_EventType.SDL_KEYDOWN:
+                    if (e.key.repeat == 0)
+                    {
+                        switch (e.key.keysym.sym)
+                        {
+                            case SDL_Keycode.SDLK_LCTRL:
+                                _isLimitDrawingToHorizontal = true;
+                                _isLimitDrawingToVertical = true;
+                                ScriptHelper.DrawGuideLines(_drawableManager,
+                                    (Configuration.ControlsWidth, Coordinates.PointingToTileScreenSpace.Y),
+                                    (Configuration.WindowSizeX, Coordinates.PointingToTileScreenSpace.Y),
+                                    TransformFlags.Horizontal);
+                                ScriptHelper.DrawGuideLines(_drawableManager,
+                                    (Coordinates.PointingToTileScreenSpace.X, 0),
+                                    (Coordinates.PointingToTileScreenSpace.X, Configuration.WindowSizeY),
+                                    TransformFlags.Vertical);
+                                _permX = Coordinates.PointingToTileScreenSpace.X;
+                                _permY = Coordinates.PointingToTileScreenSpace.Y;
+
+                                break;
+                        }
+                    }
+
+                    break;
+                case SDL_EventType.SDL_KEYUP:
+                    if (e.key.repeat == 0)
+                    {
+                        switch (e.key.keysym.sym)
+                        {
+                            case SDL_Keycode.SDLK_LCTRL:
+                                _isStopDrawingGuides = false;
+                                _isLimitDrawingToHorizontal = false;
+                                _isLimitDrawingToVertical = false;
+                                ScriptHelper.DestroyGuideLines(_drawableManager, (_oldTileScreenSpaceMouseAlways.X, 0),
+                                    (_oldTileScreenSpaceMouseAlways.X, Configuration.WindowSizeY),
+                                    TransformFlags.Vertical);
+                                ScriptHelper.DestroyGuideLines(_drawableManager,
+                                    (Configuration.ControlsWidth, _oldTileScreenSpaceMouseAlways.Y),
+                                    (Configuration.WindowSizeX, _oldTileScreenSpaceMouseAlways.Y),
+                                    TransformFlags.Horizontal);
+                                _permX = Coordinates.PointingToTileScreenSpace.X;
+                                _permY = Coordinates.PointingToTileScreenSpace.Y;
+                                break;
+                        }
+                    }
+
+                    break;
                 case SDL_EventType.SDL_MOUSEBUTTONDOWN:
 
                     if (e.button.button == SDL_BUTTON_MIDDLE &&
@@ -122,13 +247,11 @@ internal class SDLEventHandler
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            //_isWaitingMouseLeftUp = true;
                             _isMouseLeftDragging = true;
                         }
 
                         if (e.button.button == SDL_BUTTON_RIGHT)
                         {
-                            //_isWaitingMouseRightUp = true;
                             _isMouseRightDragging = true;
                         }
                     }
@@ -145,12 +268,10 @@ internal class SDLEventHandler
                     {
                         if (e.button.button == SDL_BUTTON_LEFT)
                         {
-                            //_isWaitingMouseLeftUp = false;
                             _isMouseLeftDragging = false;
                         }
                         else if (e.button.button == SDL_BUTTON_RIGHT)
                         {
-                            //_isWaitingMouseRightUp = false;
                             _isMouseRightDragging = false;
                         }
                     }

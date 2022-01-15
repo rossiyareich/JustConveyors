@@ -4,7 +4,7 @@ namespace JustConveyors.Source.Scripting;
 
 internal abstract class DrawableScript : IScript
 {
-    protected readonly Drawable Drawable;
+    public readonly Drawable Drawable;
 
     public DrawableScript(Drawable drawable) => Drawable = drawable;
 

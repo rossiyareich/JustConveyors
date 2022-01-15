@@ -11,6 +11,7 @@ internal static class GUI
     private static float s_displayZoom = 1f;
     public static Action<TexturePool> OnActiveSurfaceChanged;
     public static Action<TransformFlags> OnActiveSurfaceTransformChanged;
+    public static Action OnClearPalette;
     private static int oldSelection;
     public static bool IsPause;
 
@@ -37,7 +38,14 @@ internal static class GUI
 
         #region Time
 
-        ImGui.BeginChild("Time", new Vector2(Configuration.ControlsWidth - 17, 35), true);
+        ImGui.BeginChild("Misc", new Vector2(Configuration.ControlsWidth - 17, 65), true);
+
+        if (ImGui.Button("Clear palette", new Vector2(Configuration.ControlsWidth - 40, 20)))
+        {
+            OnClearPalette?.Invoke();
+        }
+
+        ImGui.Dummy(new Vector2(0, 2));
 
         ImGui.AlignTextToFramePadding();
         ImGui.Text("    Paused");

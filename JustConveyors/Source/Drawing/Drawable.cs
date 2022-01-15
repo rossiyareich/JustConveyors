@@ -193,9 +193,16 @@ internal class Drawable : Component
         return drawable;
     }
 
+    public void CloseStateless()
+    {
+        Script = null;
+        base.Close();
+    }
+
     public override void Close()
     {
         Script = null;
+        Manager.Drawables.Remove(this);
         base.Close();
     }
 }

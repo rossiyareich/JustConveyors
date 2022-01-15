@@ -4,7 +4,7 @@ namespace JustConveyors.Source.Scripting;
 
 internal abstract class AnimatableScript : IScript
 {
-    protected readonly Animatable Animatable;
+    public readonly Animatable Animatable;
 
     public AnimatableScript(Animatable animatable) => Animatable = animatable;
 
