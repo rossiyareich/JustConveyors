@@ -28,7 +28,7 @@ internal class SourceScript : DrawableScript
             Drawable drawable = Drawable.Instantiate(Drawable.Manager, X + 12, Y, PoolResources.RubyPool, 0,
                 6,
                 TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { x = 1 });
+            drawable.Script = new RubyScript(drawable);
         }
 
         if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { x = X - 16 }, true) is
@@ -38,7 +38,7 @@ internal class SourceScript : DrawableScript
         {
             Drawable drawable = Drawable.Instantiate(Drawable.Manager, X - 12, Y, PoolResources.RubyPool, 0, 6,
                 TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { x = -1 });
+            drawable.Script = new RubyScript(drawable);
         }
 
         if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y + 16 }, true) is
@@ -49,7 +49,7 @@ internal class SourceScript : DrawableScript
             Drawable drawable =
                 Drawable.Instantiate(Drawable.Manager, X, Y + 12, PoolResources.RubyPool, 0, 6,
                     TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { y = 1 });
+            drawable.Script = new RubyScript(drawable);
         }
 
         if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y - 16 }, true) is
@@ -60,7 +60,7 @@ internal class SourceScript : DrawableScript
             Drawable drawable =
                 Drawable.Instantiate(Drawable.Manager, X, Y - 12, PoolResources.RubyPool, 0, 6,
                     TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable, new SDL.SDL_Rect { y = -1 });
+            drawable.Script = new RubyScript(drawable);
         }
     }
 

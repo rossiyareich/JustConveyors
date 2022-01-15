@@ -6,12 +6,11 @@ namespace JustConveyors.Source.Scripting;
 
 internal class RubyScript : DrawableScript
 {
-    private readonly SDL.SDL_Rect _deltaRect;
+    private SDL.SDL_Rect _deltaRect;
+    public bool IsStopped { get; private set; }
 
-    public RubyScript(Drawable drawable, SDL.SDL_Rect deltaRect) : base(drawable)
+    public RubyScript(Drawable drawable) : base(drawable)
     {
-        _deltaRect.x = deltaRect.x;
-        _deltaRect.y = deltaRect.y;
     }
 
     public override void Start()
@@ -20,8 +19,51 @@ internal class RubyScript : DrawableScript
 
     public override void Update()
     {
-        Drawable.Transform.x += (int)(_deltaRect.x * 300f * Time.DeltaTime);
-        Drawable.Transform.y += (int)(_deltaRect.y * 300f * Time.DeltaTime);
+        var underDrawable = Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.WorldSpaceTileTransform, true);
+        if (underDrawable is null)
+        {
+            IsStopped = true;
+            return;
+        }
+
+        var underScript = underDrawable.Script as ConveyorScript;
+        _deltaRect = underScript.Direction switch
+        {
+            TransformFlags.DirN => new SDL.SDL_Rect() { x = 0, y = -1 },
+            TransformFlags.DirS => new SDL.SDL_Rect() { x = 0, y = 1 },
+            TransformFlags.DirE => new SDL.SDL_Rect() { x = 1, y = 0 },
+            TransformFlags.DirW => new SDL.SDL_Rect() { x = -1, y = 0 },
+            _ => throw new Exception("Unsupported direction")
+        };
+
+        var frontRect = underScript.Direction switch
+        {
+            TransformFlags.DirN => new SDL.SDL_Rect()
+            {
+                h = 16, w = 16, x = Drawable.Transform.x, y = Drawable.Transform.y - 8
+            },
+            TransformFlags.DirS => new SDL.SDL_Rect()
+            {
+                h = 16, w = 16, x = Drawable.Transform.x, y = Drawable.Transform.y + 8
+            },
+            TransformFlags.DirE => new SDL.SDL_Rect()
+            {
+                h = 16, w = 16, x = Drawable.Transform.x + 8, y = Drawable.Transform.y
+            },
+            TransformFlags.DirW => new SDL.SDL_Rect()
+            {
+                h = 16, w = 16, x = Drawable.Transform.x - 8, y = Drawable.Transform.y
+            },
+            _ => throw new Exception("Unsupported direction")
+        };
+
+        IsStopped = (Drawable.Manager.GetDrawable<RubyScript>(frontRect, true) is not null);
+
+        if (!IsStopped)
+        {
+            Drawable.Transform.x += (int)(_deltaRect.x * underScript.Speed * Time.DeltaTime);
+            Drawable.Transform.y += (int)(_deltaRect.y * underScript.Speed * Time.DeltaTime);
+        }
     }
 
     public override void Close()

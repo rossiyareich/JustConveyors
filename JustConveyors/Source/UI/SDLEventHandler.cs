@@ -39,7 +39,10 @@ internal class SDLEventHandler
 
     public static Drawable ActiveBlock { get; private set; }
 
-    private void OnActiveSurfaceTransformChanged(TransformFlags newFlag) => ActiveBlock.SetSurface(newFlag);
+    private void OnActiveSurfaceTransformChanged(TransformFlags newFlag)
+    {
+        ActiveBlock.SetSurface(newFlag);
+    }
 
     private void OnActiveSurfaceChanged(TexturePool newSurface)
     {
@@ -69,6 +72,16 @@ internal class SDLEventHandler
 
             if (_oldTileScreenSpaceMouseAlways != Coordinates.PointingToTileScreenSpace)
             {
+                try
+                {
+                    ScriptHelper.DestroyArrow(_drawableManager,
+                        _oldTileScreenSpaceMouseAlways.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                        ActiveBlock.GetArwFromBlock());
+                }
+                catch (Exception)
+                {
+                }
+
                 if (_isLimitDrawingToVertical && _isLimitDrawingToHorizontal)
                 {
                     if (_oldTileScreenSpaceMouseAlways.X != Coordinates.PointingToTileScreenSpace.X)
@@ -125,6 +138,11 @@ internal class SDLEventHandler
                             TransformFlags.Horizontal);
                     }
 
+                    if (ActiveBlock.ParentPool.ScrollType == ScrollTransformFlags.FourDirections &&
+                        Coordinates.IsInCanvasBounds)
+                        ScriptHelper.DrawArrow(_drawableManager,
+                            Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                            ActiveBlock.GetArwFromBlock(), ActiveBlock.Rotation);
                     _oldTileScreenSpaceMouseAlways = Coordinates.PointingToTileScreenSpace;
                 }
             }
@@ -138,7 +156,7 @@ internal class SDLEventHandler
                 Coordinates.PointingToTileScreenSpace.X = _permX;
             }
 
-            if (_isMouseLeftDragging && _oldTileScreenSpaceMouseLeft != Coordinates.PointingToTileScreenSpace &&
+            if (_isMouseLeftDragging &&
                 Coordinates.IsInCanvasBounds)
             {
                 if (!_drawableManager.GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
@@ -173,7 +191,7 @@ internal class SDLEventHandler
                 _oldTileScreenSpaceMouseLeft = Coordinates.PointingToTileScreenSpace;
             }
 
-            if (_isMouseRightDragging && _oldTileScreenSpaceMouseRight != Coordinates.PointingToTileScreenSpace)
+            if (_isMouseRightDragging)
             {
                 _drawableManager.GetDrawables(Coordinates.GetWorldSpaceTile(Coordinates.PointingToTileScreenSpace),
                     ActiveBlock)?.FirstOrDefault(x =>
@@ -274,6 +292,16 @@ internal class SDLEventHandler
                         {
                             _isMouseRightDragging = false;
                         }
+
+                        try
+                        {
+                            ScriptHelper.DestroyArrow(_drawableManager,
+                                Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                                ActiveBlock.GetArwFromBlock());
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
 
                     break;
@@ -306,6 +334,27 @@ internal class SDLEventHandler
                                 }
 
                                 break;
+                            case ScrollTransformFlags.FourDirections: //1->4
+
+                                ScriptHelper.DestroyArrow(_drawableManager,
+                                    Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                                    ActiveBlock.GetArwFromBlock());
+
+
+                                if ((int)ActiveBlock.Rotation is >= 1 and < 4)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
+                                }
+                                else if ((int)ActiveBlock.Rotation == 4)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)1);
+                                }
+
+                                ScriptHelper.DrawArrow(_drawableManager,
+                                    Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                                    ActiveBlock.GetArwFromBlock(), ActiveBlock.Rotation);
+
+                                break;
                         }
                     }
                     else if (e.wheel.y < 0) // scroll down
@@ -328,13 +377,32 @@ internal class SDLEventHandler
                             case ScrollTransformFlags.HorizontalVertical: //9->10
                                 if ((int)ActiveBlock.Rotation is > 9 and <= 10)
                                 {
-                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation + 1));
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation - 1));
                                 }
                                 else if ((int)ActiveBlock.Rotation == 9)
                                 {
                                     ActiveBlock.SetSurface((TransformFlags)10);
                                 }
 
+                                break;
+                            case ScrollTransformFlags.FourDirections: //1->4
+
+                                ScriptHelper.DestroyArrow(_drawableManager,
+                                    Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                                    ActiveBlock.GetArwFromBlock());
+
+                                if ((int)ActiveBlock.Rotation is > 1 and <= 4)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)((int)ActiveBlock.Rotation - 1));
+                                }
+                                else if ((int)ActiveBlock.Rotation == 1)
+                                {
+                                    ActiveBlock.SetSurface((TransformFlags)4);
+                                }
+
+                                ScriptHelper.DrawArrow(_drawableManager,
+                                    Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
+                                    ActiveBlock.GetArwFromBlock(), ActiveBlock.Rotation);
                                 break;
                         }
                     }

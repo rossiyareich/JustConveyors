@@ -4,10 +4,10 @@ internal enum TransformFlags
 {
     None,
 
-    DirN,
-    DirS,
-    DirE,
     DirW,
+    DirN,
+    DirE,
+    DirS,
     DirNE,
     DirNW,
     DirSW,
@@ -16,5 +16,10 @@ internal enum TransformFlags
     Horizontal,
     Vertical,
 
-    IndexZero
+    IndexZero,
+
+    NWDown,
+    NWUp,
+    NWLeft,
+    NWRight
 }

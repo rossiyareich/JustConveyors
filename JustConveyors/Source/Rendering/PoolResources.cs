@@ -16,36 +16,50 @@ internal class PoolResources : IDisposable
         (@"Resources\Assets\bridge_conveyor\output (BridgeCon) 1.png", TransformFlags.Vertical));
 
     public static readonly TexturePool BlueConveyorPool = new(false, typeof(TitaniumConveyorBaseScript),
-        (@"Resources\Assets\conveyors\output (BluC) 0.png", TransformFlags.Horizontal),
-        (@"Resources\Assets\conveyors\output (BluC) 1.png", TransformFlags.Vertical),
+        (@"Resources\Assets\conveyors\output (BluC) 0.png", TransformFlags.DirW),
+        (@"Resources\Assets\conveyors\output (BluC) 1.png", TransformFlags.DirN),
+        (@"Resources\Assets\conveyors\output (BluC) 0.png", TransformFlags.DirE),
+        (@"Resources\Assets\conveyors\output (BluC) 1.png", TransformFlags.DirS),
         (@"Resources\Assets\conveyors\output (BluCC) 0.png", TransformFlags.DirNE),
         (@"Resources\Assets\conveyors\output (BluCC) 1.png", TransformFlags.DirNW),
         (@"Resources\Assets\conveyors\output (BluCC) 2.png", TransformFlags.DirSW),
-        (@"Resources\Assets\conveyors\output (BluCC) 3.png", TransformFlags.DirSE))
+        (@"Resources\Assets\conveyors\output (BluCC) 3.png", TransformFlags.DirSE),
+        (@"Resources\Assets\conveyors\output (BluC1) 0.png", TransformFlags.NWDown),
+        (@"Resources\Assets\conveyors\output (BluC1) 3.png", TransformFlags.NWUp),
+        (@"Resources\Assets\conveyors\output (BluC1) 1.png", TransformFlags.NWLeft),
+        (@"Resources\Assets\conveyors\output (BluC1) 2.png", TransformFlags.NWRight))
     {
-        ScrollType = ScrollTransformFlags.HorizontalVertical
+        ScrollType = ScrollTransformFlags.FourDirections
     };
 
     public static readonly TexturePool PurpleConveyorPool = new(false, typeof(ThoriumConveyorBaseScript),
-        (@"Resources\Assets\conveyors\output (PurC) 0.png", TransformFlags.Horizontal),
-        (@"Resources\Assets\conveyors\output (PurC) 1.png", TransformFlags.Vertical),
+        (@"Resources\Assets\conveyors\output (PurC) 0.png", TransformFlags.DirW),
+        (@"Resources\Assets\conveyors\output (PurC) 1.png", TransformFlags.DirN),
+        (@"Resources\Assets\conveyors\output (PurC) 0.png", TransformFlags.DirE),
+        (@"Resources\Assets\conveyors\output (PurC) 1.png", TransformFlags.DirS),
         (@"Resources\Assets\conveyors\output (PurCC) 0.png", TransformFlags.DirNE),
         (@"Resources\Assets\conveyors\output (PurCC) 1.png", TransformFlags.DirNW),
         (@"Resources\Assets\conveyors\output (PurCC) 2.png", TransformFlags.DirSW),
         (@"Resources\Assets\conveyors\output (PurCC) 3.png", TransformFlags.DirSE))
     {
-        ScrollType = ScrollTransformFlags.HorizontalVertical
+        ScrollType = ScrollTransformFlags.FourDirections
     };
 
     public static readonly TexturePool RedConveyorPool = new(false, typeof(ArmoredConveyorBaseScript),
-        (@"Resources\Assets\conveyors\output (RedC) 0.png", TransformFlags.Horizontal),
-        (@"Resources\Assets\conveyors\output (RedC) 1.png", TransformFlags.Vertical),
+        (@"Resources\Assets\conveyors\output (RedC) 0.png", TransformFlags.DirW),
+        (@"Resources\Assets\conveyors\output (RedC) 1.png", TransformFlags.DirN),
+        (@"Resources\Assets\conveyors\output (RedC) 0.png", TransformFlags.DirE),
+        (@"Resources\Assets\conveyors\output (RedC) 1.png", TransformFlags.DirS),
         (@"Resources\Assets\conveyors\output (RedCC) 0.png", TransformFlags.DirNE),
         (@"Resources\Assets\conveyors\output (RedCC) 1.png", TransformFlags.DirNW),
         (@"Resources\Assets\conveyors\output (RedCC) 2.png", TransformFlags.DirSW),
-        (@"Resources\Assets\conveyors\output (RedCC) 3.png", TransformFlags.DirSE))
+        (@"Resources\Assets\conveyors\output (RedCC) 3.png", TransformFlags.DirSE),
+        (@"Resources\Assets\conveyors\output (RedC1) 0.png", TransformFlags.NWDown),
+        (@"Resources\Assets\conveyors\output (RedC1) 3.png", TransformFlags.NWUp),
+        (@"Resources\Assets\conveyors\output (RedC1) 1.png", TransformFlags.NWLeft),
+        (@"Resources\Assets\conveyors\output (RedC1) 2.png", TransformFlags.NWRight))
     {
-        ScrollType = ScrollTransformFlags.HorizontalVertical
+        ScrollType = ScrollTransformFlags.FourDirections
     };
 
     public static readonly TexturePool BlueConveyorArrowPool = new(false, typeof(TitaniumConveyorArwScript),

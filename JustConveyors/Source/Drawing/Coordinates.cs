@@ -58,8 +58,10 @@ internal static class Coordinates
     }
 
     public static (int X, int Y) GetWorldSpaceTile(SDL_Rect rect) =>
-        ((rect.x - Configuration.ControlsWidth) / 16, rect.y / 16);
+        ((int)Math.Round((rect.x - Configuration.ControlsWidth) / 16f, MidpointRounding.AwayFromZero),
+            (int)Math.Round(rect.y / 16f, MidpointRounding.AwayFromZero));
 
     public static (int X, int Y) GetWorldSpaceTile((int X, int Y) screenSpaceUnmapped) =>
-        ((screenSpaceUnmapped.X - Configuration.ControlsWidth) / 16, screenSpaceUnmapped.Y / 16);
+        ((int)Math.Round((screenSpaceUnmapped.X - Configuration.ControlsWidth) / 16f, MidpointRounding.AwayFromZero),
+            (int)Math.Round(screenSpaceUnmapped.Y / 16f, MidpointRounding.AwayFromZero));
 }
