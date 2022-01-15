@@ -58,13 +58,11 @@ internal static class ScriptHelper
     public static void DrawArrow(DrawableManager manager, (int X, int Y) position, TexturePool arrow,
         TransformFlags direction)
     {
-        var drawable = Drawable.Instantiate(manager, position.X, position.Y, arrow, 0, 4, direction);
+        Drawable drawable = Drawable.Instantiate(manager, position.X, position.Y, arrow, 0, 4, direction);
         drawable.Script = new ArrowScript(drawable);
     }
 
-    public static void DestroyArrow(DrawableManager manager, (int X, int Y) position, TexturePool arrow)
-    {
+    public static void DestroyArrow(DrawableManager manager, (int X, int Y) position, TexturePool arrow) =>
         manager.GetDrawable<ArrowScript>(new SDL.SDL_Rect { w = 16, h = 16, x = position.X, y = position.Y }, false)
             ?.Close();
-    }
 }

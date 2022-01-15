@@ -39,10 +39,7 @@ internal class SDLEventHandler
 
     public static Drawable ActiveBlock { get; private set; }
 
-    private void OnActiveSurfaceTransformChanged(TransformFlags newFlag)
-    {
-        ActiveBlock.SetSurface(newFlag);
-    }
+    private void OnActiveSurfaceTransformChanged(TransformFlags newFlag) => ActiveBlock.SetSurface(newFlag);
 
     private void OnActiveSurfaceChanged(TexturePool newSurface)
     {
@@ -140,9 +137,12 @@ internal class SDLEventHandler
 
                     if (ActiveBlock.ParentPool.ScrollType == ScrollTransformFlags.FourDirections &&
                         Coordinates.IsInCanvasBounds)
+                    {
                         ScriptHelper.DrawArrow(_drawableManager,
                             Coordinates.PointingToTileScreenSpace.GetScrSpaceArwXY(ActiveBlock.Rotation),
                             ActiveBlock.GetArwFromBlock(), ActiveBlock.Rotation);
+                    }
+
                     _oldTileScreenSpaceMouseAlways = Coordinates.PointingToTileScreenSpace;
                 }
             }

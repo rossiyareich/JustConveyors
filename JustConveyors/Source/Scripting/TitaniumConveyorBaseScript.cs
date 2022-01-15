@@ -18,8 +18,5 @@ internal class TitaniumConveyorBaseScript : ConveyorScript
     {
     }
 
-    public override void Close()
-    {
-        base.Close();
-    }
+    public override void Close() => base.Close();
 }

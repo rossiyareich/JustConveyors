@@ -1,6 +1,5 @@
 ﻿using JustConveyors.Source.Drawing;
 using JustConveyors.Source.Rendering;
-using SDL2;
 
 namespace JustConveyors.Source.Scripting;
 
