@@ -17,10 +17,8 @@ internal abstract class ConveyorScript : DrawableScript
             .ToList();
         foreach (Drawable ruby in rubies)
         {
-            ruby.CloseStateless();
+            ruby.BaseClose();
         }
-        //TODO: Clear by clearing the main texture, not calling close on each
-
 
         Drawable.Manager.Drawables.RemoveAll(x => rubies.Any(y => y == x));
     }

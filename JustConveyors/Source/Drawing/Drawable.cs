@@ -157,6 +157,8 @@ internal class Drawable : Component
         return drawable;
     }
 
+    public void BaseClose() => base.Close();
+
     public void CloseStateless()
     {
         Script = null;
