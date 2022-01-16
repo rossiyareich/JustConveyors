@@ -25,6 +25,20 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ## Early versions:
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
+## Videos
+
+### Conveyor loops
+https://user-images.githubusercontent.com/61973036/149662363-b8868bb0-a0a0-4781-9809-245226454d66.mp4
+
+### Drawing guides
+https://user-images.githubusercontent.com/61973036/149662369-e95ac476-30b9-43aa-b46f-9a1ef3923c60.mp4
+
+### Zooming
+https://user-images.githubusercontent.com/61973036/149662373-0cbc9a5f-77c5-4bf5-a3ea-6d94d6e602cc.mp4
+
+### Pause&Play
+https://user-images.githubusercontent.com/61973036/149662379-73c17d4a-7948-483a-b83c-23d23945665f.mp4
+
 ## TODO:
 - Add multithreading
 - Add logic for all blocks
