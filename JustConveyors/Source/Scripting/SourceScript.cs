@@ -27,11 +27,13 @@ internal class SourceScript : DrawableScript
         int X = direction.TryGetDeltaRect().x * rubyDrawOffset + Drawable.Transform.x;
         int Y = direction.TryGetDeltaRect().y * rubyDrawOffset + Drawable.Transform.y;
 
-        var adjacentConveyor =
+        Drawable adjacentConveyor =
             Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.Transform.TryGetAdjacentCoords(direction, 16, 16),
                 true);
         if (adjacentConveyor is null)
+        {
             return;
+        }
 
         if ((adjacentConveyor.Script as ConveyorScript)!.IsAllowedInDirection(direction) &&
             !(adjacentConveyor.Script as ConveyorScript)!.IsClogged)

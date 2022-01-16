@@ -18,11 +18,9 @@ internal abstract class ConveyorScript : DrawableScript
         Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.Transform.TryGetAdjacentCoords(Direction, 16, 16), true)
             is null;
 
-    public bool IsStopRuby(SDL.SDL_Rect rect)
-    {
-        return (IsEndOfLine && IsClogged &&
-                rect.TryGetRubyOffset(Direction.GetOppositeFour(), 16).Equals(Drawable.Transform));
-    }
+    public bool IsStopRuby(SDL.SDL_Rect rect) =>
+        IsEndOfLine && IsClogged &&
+        rect.TryGetRubyOffset(Direction.GetOppositeFour(), 16).Equals(Drawable.Transform);
 
     public bool IsAllowedInDirection(TransformFlags direction)
     {

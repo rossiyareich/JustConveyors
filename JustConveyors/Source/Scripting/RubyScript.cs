@@ -7,22 +7,17 @@ namespace JustConveyors.Source.Scripting;
 internal class RubyScript : DrawableScript
 {
     private SDL.SDL_Rect _deltaRect;
+    private readonly TransformFlags _direction;
     private Drawable _realDrawable;
-    private TransformFlags _direction;
 
-    public RubyScript(Drawable drawable, TransformFlags direction) : base(drawable)
-    {
-        _direction = direction;
-    }
+    public RubyScript(Drawable drawable, TransformFlags direction) : base(drawable) => _direction = direction;
 
     public bool IsStopped { get; private set; }
 
-    public override void Start()
-    {
+    public override void Start() =>
         _realDrawable =
             Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.Transform.TryGetAdjacentCoords(_direction, 16, 4),
                 false);
-    }
 
     public override void Update()
     {
