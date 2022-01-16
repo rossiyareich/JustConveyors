@@ -6,8 +6,8 @@ namespace JustConveyors.Source.Scripting;
 
 internal class RubyScript : DrawableScript
 {
-    private SDL.SDL_Rect _deltaRect;
     private readonly TransformFlags _direction;
+    private SDL.SDL_Rect _deltaRect;
     private Drawable _realDrawable;
 
     public RubyScript(Drawable drawable, TransformFlags direction) : base(drawable) => _direction = direction;
@@ -27,6 +27,10 @@ internal class RubyScript : DrawableScript
 
 
         ConveyorScript realScript = _realDrawable?.Script as ConveyorScript;
+        if (realScript is null)
+        {
+            return;
+        }
 
         if (realScript!.IsStopRuby(Drawable.Transform))
         {
