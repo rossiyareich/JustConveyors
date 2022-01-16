@@ -1,3 +1,5 @@
+# This project is no longer being actively developed or maintained. See the reasons below
+
 # JustConveyors (WIP)
 Mindustry and Factorio-style conveyors/transport system using SDL, OpenGL, and ImGUI on C#
 
@@ -24,5 +26,10 @@ It's highly recommended to instead generate the required bindings to use imgui_i
 ![Testing screenshot](https://raw.githubusercontent.com/rossiyareich/JustConveyors/master/.github/images/screenshot0.png "Early render test")
 
 ## TODO:
+- Add multithreading
 - Add logic for all blocks
 - Add save strings
+
+## This This project is no longer being actively developed or maintained for the following reasons:
+- I do not have the time and resources to further continue the development of JustConveyors for the being due to school and life in general
+- The project is riddled with performance issues; until multithreading is implemented and the logic optimized, I foresee no active development as the final product will be slow and unusable
