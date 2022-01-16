@@ -6,7 +6,7 @@ internal class TitaniumConveyorBaseScript : ConveyorScript
 {
     public TitaniumConveyorBaseScript(Drawable drawable) : base(drawable)
     {
-        Speed = 300f;
+        Speed = 1f;
         Direction = Drawable.Rotation;
     }
 

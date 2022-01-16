@@ -77,6 +77,16 @@ internal static class ScriptHelper
             _ => throw new Exception("Unsupported direction")
         };
 
+    public static SDL.SDL_Rect TryGetRubyOffset(this SDL.SDL_Rect rect, TransformFlags fourDirection, int wh) =>
+        fourDirection switch
+        {
+            TransformFlags.DirN => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y },
+            TransformFlags.DirS => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y },
+            TransformFlags.DirE => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y },
+            TransformFlags.DirW => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y },
+            _ => throw new Exception("Unsupported direction")
+        };
+
     public static SDL.SDL_Rect TryGetDeltaRect(this TransformFlags direction) =>
         direction switch
         {

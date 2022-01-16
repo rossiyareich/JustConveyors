@@ -52,4 +52,13 @@ internal static class TransformFlagsHelper
         SDL.SDL_Rect org = TryGetScrSpaceArw(position, direction);
         return (org.x, org.y);
     }
+
+    public static TransformFlags GetOppositeFour(this TransformFlags flag) => flag switch
+    {
+        TransformFlags.DirN => TransformFlags.DirS,
+        TransformFlags.DirS => TransformFlags.DirN,
+        TransformFlags.DirE => TransformFlags.DirW,
+        TransformFlags.DirW => TransformFlags.DirE,
+        _ => throw new Exception("Unsupported direction")
+    };
 }
