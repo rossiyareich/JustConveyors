@@ -18,9 +18,11 @@ internal class RubyScript : DrawableScript
     {
     }
 
+    //TODO: Offset the collision by 8px
     public override void Update()
     {
-        Drawable underDrawable = Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.WorldSpaceTileTransform, true);
+        Drawable underDrawable =
+            Drawable.Manager.GetDrawable<ConveyorScript>(Drawable.WorldSpaceTileTransform, true);
         if (underDrawable is null)
         {
             IsStopped = true;
@@ -28,37 +30,10 @@ internal class RubyScript : DrawableScript
         }
 
         ConveyorScript underScript = underDrawable.Script as ConveyorScript;
-        _deltaRect = underScript.Direction switch
-        {
-            TransformFlags.DirN => new SDL.SDL_Rect { x = 0, y = -1 },
-            TransformFlags.DirS => new SDL.SDL_Rect { x = 0, y = 1 },
-            TransformFlags.DirE => new SDL.SDL_Rect { x = 1, y = 0 },
-            TransformFlags.DirW => new SDL.SDL_Rect { x = -1, y = 0 },
-            _ => throw new Exception("Unsupported direction")
-        };
+        _deltaRect = underScript!.Direction.TryGetDeltaRect();
 
-        SDL.SDL_Rect frontRect = underScript.Direction switch
-        {
-            TransformFlags.DirN => new SDL.SDL_Rect
-            {
-                h = 16, w = 16, x = Drawable.Transform.x, y = Drawable.Transform.y - 8
-            },
-            TransformFlags.DirS => new SDL.SDL_Rect
-            {
-                h = 16, w = 16, x = Drawable.Transform.x, y = Drawable.Transform.y + 8
-            },
-            TransformFlags.DirE => new SDL.SDL_Rect
-            {
-                h = 16, w = 16, x = Drawable.Transform.x + 8, y = Drawable.Transform.y
-            },
-            TransformFlags.DirW => new SDL.SDL_Rect
-            {
-                h = 16, w = 16, x = Drawable.Transform.x - 8, y = Drawable.Transform.y
-            },
-            _ => throw new Exception("Unsupported direction")
-        };
-
-        IsStopped = Drawable.Manager.GetDrawable<RubyScript>(frontRect, true) is not null;
+        IsStopped = Drawable.Manager.GetDrawable<RubyScript>(
+            Drawable.Transform.TryGetAdjacentCoords(underScript.Direction, 16, 8), true) is not null;
 
         if (!IsStopped)
         {

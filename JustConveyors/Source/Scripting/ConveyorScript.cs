@@ -13,11 +13,14 @@ internal abstract class ConveyorScript : DrawableScript
 
     public override void Close()
     {
-        IEnumerable<Drawable> rubies = Drawable.Manager.GetDrawables<RubyScript>(Drawable.WorldSpaceTileTransform);
+        IEnumerable<Drawable> rubies = Drawable.Manager.GetDrawables<RubyScript>(Drawable.WorldSpaceTileTransform)
+            .ToList();
         foreach (Drawable ruby in rubies)
         {
             ruby.CloseStateless();
         }
+        //TODO: Clear by clearing the main texture, not calling close on each
+
 
         Drawable.Manager.Drawables.RemoveAll(x => rubies.Any(y => y == x));
     }

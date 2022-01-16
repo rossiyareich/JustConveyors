@@ -5,7 +5,7 @@ namespace JustConveyors.Source.UI;
 
 internal static class TransformFlagsHelper
 {
-    public static SDL.SDL_Rect GetScrSpaceArw(this (int X, int Y) position, TransformFlags direction) =>
+    public static SDL.SDL_Rect TryGetScrSpaceArw(this (int X, int Y) position, TransformFlags direction) =>
         direction switch
         {
             TransformFlags.DirN => new SDL.SDL_Rect
@@ -47,6 +47,9 @@ internal static class TransformFlagsHelper
             _ => throw new Exception("Unsupported direction")
         };
 
-    public static (int X, int Y) GetScrSpaceArwXY(this (int X, int Y) position, TransformFlags direction) =>
-        (GetScrSpaceArw(position, direction).x, GetScrSpaceArw(position, direction).y);
+    public static (int X, int Y) TryGetScrSpaceArwXY(this (int X, int Y) position, TransformFlags direction)
+    {
+        SDL.SDL_Rect org = TryGetScrSpaceArw(position, direction);
+        return (org.x, org.y);
+    }
 }

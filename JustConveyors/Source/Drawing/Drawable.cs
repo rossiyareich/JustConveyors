@@ -127,27 +127,9 @@ internal class Drawable : Component
         TexturePool pool,
         int startIndex, uint layer, TransformFlags startRotation)
     {
-        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
-        {
-            w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY
-        };
+        SDL.SDL_Rect parent = new() { w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY };
 
-        if (parent.x < Configuration.ControlsWidth)
-        {
-            return null;
-        }
-
-        if (parent.x > Configuration.WindowSizeX)
-        {
-            return null;
-        }
-
-        if (parent.y > Configuration.WindowSizeY)
-        {
-            return null;
-        }
-
-        if (parent.y < 0)
+        if (!Coordinates.RectIsInScrSpaceBounds(parent))
         {
             return null;
         }
@@ -162,27 +144,9 @@ internal class Drawable : Component
         IntPtr surface,
         int startIndex, uint layer)
     {
-        SDL.SDL_Rect parent = new() //Fix this: accept a different parent and try to separate logic from drawing
-        {
-            w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY
-        };
+        SDL.SDL_Rect parent = new() { w = 16, h = 16, x = screenSpaceCoordX, y = screenSpaceCoordY };
 
-        if (parent.x < Configuration.ControlsWidth)
-        {
-            return null;
-        }
-
-        if (parent.x > Configuration.WindowSizeX)
-        {
-            return null;
-        }
-
-        if (parent.y > Configuration.WindowSizeY)
-        {
-            return null;
-        }
-
-        if (parent.y < 0)
+        if (!Coordinates.RectIsInScrSpaceBounds(parent))
         {
             return null;
         }

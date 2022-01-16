@@ -16,49 +16,28 @@ internal class SourceScript : DrawableScript
     //TODO: Only pump out more when next conveyor is not clogged
     public override void Update()
     {
-        int X = Drawable.Transform.x;
-        int Y = Drawable.Transform.y;
-
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { x = X + 16 }, true) is
-                not
-                null &&
-            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { x = X + 12 }, true) is null)
+        for (int i = 1; i <= 4; i++)
         {
-            Drawable drawable = Drawable.Instantiate(Drawable.Manager, X + 12, Y, PoolResources.RubyPool, 0,
+            Pump((TransformFlags)i, 12);
+        }
+    }
+
+    public void Pump(TransformFlags direction, int rubyDrawOffset)
+    {
+        int X = direction.TryGetDeltaRect().x * rubyDrawOffset + Drawable.Transform.x;
+        int Y = direction.TryGetDeltaRect().y * rubyDrawOffset + Drawable.Transform.y;
+
+        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(
+                Drawable.Transform.TryGetAdjacentCoords(direction, 16, 16), true) is not null &&
+            Drawable.Manager.GetDrawable<RubyScript>(
+                    Drawable.Transform.TryGetAdjacentCoords(direction, 8, rubyDrawOffset),
+                    true) is
+                null)
+        {
+            Drawable drawable = Drawable.Instantiate(Drawable.Manager, X, Y, PoolResources.RubyPool,
+                0,
                 6,
                 TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable);
-        }
-
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { x = X - 16 }, true) is
-                not
-                null &&
-            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { x = X - 12 }, true) is null)
-        {
-            Drawable drawable = Drawable.Instantiate(Drawable.Manager, X - 12, Y, PoolResources.RubyPool, 0, 6,
-                TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable);
-        }
-
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y + 16 }, true) is
-                not
-                null &&
-            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { y = Y + 12 }, true) is null)
-        {
-            Drawable drawable =
-                Drawable.Instantiate(Drawable.Manager, X, Y + 12, PoolResources.RubyPool, 0, 6,
-                    TransformFlags.IndexZero);
-            drawable.Script = new RubyScript(drawable);
-        }
-
-        if (Drawable.Manager.GetDrawable<TitaniumConveyorBaseScript>(Drawable.Transform with { y = Y - 16 }, true) is
-                not
-                null &&
-            Drawable.Manager.GetDrawable<RubyScript>(Drawable.Transform with { y = Y - 12 }, true) is null)
-        {
-            Drawable drawable =
-                Drawable.Instantiate(Drawable.Manager, X, Y - 12, PoolResources.RubyPool, 0, 6,
-                    TransformFlags.IndexZero);
             drawable.Script = new RubyScript(drawable);
         }
     }

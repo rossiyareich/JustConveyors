@@ -14,9 +14,7 @@ internal abstract class DrawableScript : IScript
 
     public virtual void LateUpdate()
     {
-        if (Drawable.Transform.x > Configuration.WindowSizeX ||
-            Drawable.Transform.x < Configuration.ControlsWidth ||
-            Drawable.Transform.y > Configuration.WindowSizeY || Drawable.Transform.y < 0)
+        if (!Coordinates.RectIsInScrSpaceBounds(Drawable.Transform))
         {
             Drawable.Close();
         }

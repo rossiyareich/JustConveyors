@@ -10,5 +10,5 @@ uniform mat4 model;
 void main()
 {
     gl_Position = projection * model * vec4(aPosition.xy, 0, 1.0);
-    texCoord = /*vec2(aTex.s, 1.0 - aTex.t)*/ aTex;
+    texCoord = aTex;
 }

@@ -17,6 +17,19 @@ internal static class Coordinates
                                            PointingToScreenSpace.Y <= Configuration.WindowSizeY &&
                                            PointingToRaw.X >= Configuration.ControlsWidth;
 
+    public static bool RectIsInScrSpaceBounds(SDL_Rect rect)
+    {
+        if (rect.x < Configuration.ControlsWidth ||
+            rect.x > Configuration.WindowSizeX ||
+            rect.y > Configuration.WindowSizeY ||
+            rect.y < 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public static void UpdatePointer()
     {
         SDL_GetMouseState(out int mouseX, out int mouseY);

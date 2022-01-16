@@ -35,6 +35,7 @@ internal class Program : IEventHolder
             @this.OnStart?.Invoke();
             while (display.Window != 0)
             {
+                uiHandler.PollDrawing();
                 if (!uiHandler.PollEvents())
                 {
                     @this.OnClose?.Invoke();

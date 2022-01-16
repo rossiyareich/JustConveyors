@@ -31,6 +31,7 @@ internal partial class DrawableManager : IDisposable
                 drawable.CloseStateless();
             }
 
+            //TODO: Clear by clearing the main texture, not calling close on each
             Drawable x = Drawables.FirstOrDefault(x => x.ParentPool == SDLEventHandler.ActiveBlock.ParentPool);
             Drawables.Clear();
             Drawables.Add(x);

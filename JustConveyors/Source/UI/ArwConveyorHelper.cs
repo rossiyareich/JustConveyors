@@ -6,7 +6,7 @@ namespace JustConveyors.Source.UI;
 
 internal static class ArwConveyorHelper
 {
-    public static TexturePool GetArwFromBlock(this Drawable drawable)
+    public static TexturePool TryGetArwFromBlock(this Drawable drawable)
     {
         if (drawable.ParentPool.ScriptType == typeof(TitaniumConveyorBaseScript))
         {

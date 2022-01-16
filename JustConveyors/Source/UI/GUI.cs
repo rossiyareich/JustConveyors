@@ -12,7 +12,7 @@ internal static class GUI
     public static Action<TexturePool> OnActiveSurfaceChanged;
     public static Action<TransformFlags> OnActiveSurfaceTransformChanged;
     public static Action OnClearPalette;
-    private static int oldSelection;
+    private static int s_oldSelection;
     public static bool IsPause;
 
     public static void Draw()
@@ -83,7 +83,7 @@ internal static class GUI
 
         #region Tile Selection
 
-        int selection = oldSelection;
+        int selection = s_oldSelection;
         ImGui.BeginChild("TileSelection", new Vector2(Configuration.ControlsWidth - 17, 200), true);
 
         ImGui.AlignTextToFramePadding();
@@ -126,7 +126,7 @@ internal static class GUI
         ImGui.SameLine(200);
         ImGui.RadioButton(new string(' ', 8), ref selection, 7);
 
-        if (oldSelection != selection)
+        if (s_oldSelection != selection)
         {
             OnActiveSurfaceChanged?.Invoke(selection switch
             {
@@ -140,7 +140,7 @@ internal static class GUI
                 7 => PoolResources.SinkPool,
                 _ => throw new ArgumentException($"No selection numbered selection {selection}")
             });
-            oldSelection = selection;
+            s_oldSelection = selection;
         }
 
         ImGui.EndChild();

@@ -62,7 +62,28 @@ internal static class ScriptHelper
         drawable.Script = new ArrowScript(drawable);
     }
 
-    public static void DestroyArrow(DrawableManager manager, (int X, int Y) position, TexturePool arrow) =>
+    public static void TryDestroyArrow(DrawableManager manager, (int X, int Y) position) =>
         manager.GetDrawable<ArrowScript>(new SDL.SDL_Rect { w = 16, h = 16, x = position.X, y = position.Y }, false)
             ?.Close();
+
+    public static SDL.SDL_Rect TryGetAdjacentCoords(this SDL.SDL_Rect rect, TransformFlags fourDirection, int wh,
+        int offset) =>
+        fourDirection switch
+        {
+            TransformFlags.DirN => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y - offset },
+            TransformFlags.DirS => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x, y = rect.y + offset },
+            TransformFlags.DirE => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x + offset, y = rect.y },
+            TransformFlags.DirW => new SDL.SDL_Rect { h = wh, w = wh, x = rect.x - offset, y = rect.y },
+            _ => throw new Exception("Unsupported direction")
+        };
+
+    public static SDL.SDL_Rect TryGetDeltaRect(this TransformFlags direction) =>
+        direction switch
+        {
+            TransformFlags.DirN => new SDL.SDL_Rect { x = 0, y = -1 },
+            TransformFlags.DirS => new SDL.SDL_Rect { x = 0, y = 1 },
+            TransformFlags.DirE => new SDL.SDL_Rect { x = 1, y = 0 },
+            TransformFlags.DirW => new SDL.SDL_Rect { x = -1, y = 0 },
+            _ => throw new Exception("Unsupported direction")
+        };
 }
